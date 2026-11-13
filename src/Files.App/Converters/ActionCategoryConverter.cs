@@ -13,7 +13,6 @@ namespace Files.App.Converters
 				ActionCategory.Edit => Strings.Edit.GetLocalizedResource(),
 				ActionCategory.FileSystem => Strings.FileSystem.GetLocalizedResource(),
 				ActionCategory.Grouping => Strings.GroupBy.GetLocalizedResource(),
-				ActionCategory.Git => Strings.Git.GetLocalizedResource(),
 				ActionCategory.Image => Strings.PropertySectionImage.GetLocalizedResource(),
 				ActionCategory.Install => Strings.Install.GetLocalizedResource(),
 				ActionCategory.Layout => Strings.Layout.GetLocalizedResource(),

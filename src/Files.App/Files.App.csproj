@@ -126,7 +126,6 @@
         <PackageReference Include="CommunityToolkit.WinUI.Helpers" />
         <PackageReference Include="CommunityToolkit.WinUI.Triggers" />
         <PackageReference Include="DiscUtils.Udf" />
-        <PackageReference Include="LibGit2Sharp" />
         <PackageReference Include="MessageFormat" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Logging" />

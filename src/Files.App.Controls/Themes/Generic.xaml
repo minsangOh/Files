@@ -42,7 +42,6 @@
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Favorite.xaml" />
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Status.xaml" />
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Action.xaml" />
-		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Git.xaml" />
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.SizeLayout.xaml" />
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Misc16.xaml" />
 		<ResourceDictionary Source="ms-appx:///Files.App.Controls/ThemedIcon/Styles/Icons.Properties.Dialog.xaml" />

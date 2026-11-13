@@ -693,17 +693,6 @@ namespace Files.App.Views.Layouts
 				if (FileList.ContainerFromItem(listedItem) is not null)
 					await shellViewModel.LoadExtendedItemPropertiesAsync(listedItem);
 			}
-
-			if (shellViewModel.EnabledGitProperties is not GitProperties.None)
-			{
-				await Task.WhenAll(filesAndFolders.Select(item =>
-				{
-					if (item is IGitItem gitItem)
-						return shellViewModel.LoadGitPropertiesAsync(gitItem);
-
-					return Task.CompletedTask;
-				}));
-			}
 		}
 
 		[DynamicWindowsRuntimeCast(typeof(FrameworkElement))]

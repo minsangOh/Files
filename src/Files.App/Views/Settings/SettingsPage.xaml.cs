@@ -49,8 +49,6 @@ namespace Files.App.Views
 			AppInstance.InstanceViewModel.IsPageTypeCloudDrive = false;
 			AppInstance.InstanceViewModel.IsPageTypeZipFolder = false;
 			AppInstance.InstanceViewModel.IsPageTypeLibrary = false;
-			AppInstance.InstanceViewModel.GitRepositoryPath = null;
-			AppInstance.InstanceViewModel.IsGitRepository = false;
 			AppInstance.InstanceViewModel.IsPageTypeSettings = true;
 			AppInstance.ToolbarViewModel.CanRefresh = false;
 			AppInstance.ToolbarViewModel.CanGoBack = AppInstance.CanNavigateBackward;
@@ -60,7 +58,6 @@ namespace Files.App.Views
 			await shellViewModel.SetWorkingDirectoryAsync("Settings");
 			shellViewModel.CheckForBackgroundImage();
 
-			AppInstance.SlimContentPage?.StatusBarViewModel.UpdateGitInfo(false, string.Empty, null);
 			AppInstance.SlimContentPage?.InfoPaneViewModel.UpdateSelectedItemPreviewAsync();
 
 			AppInstance.ToolbarViewModel.PathComponents.Clear();

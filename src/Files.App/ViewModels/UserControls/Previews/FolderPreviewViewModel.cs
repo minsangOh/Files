@@ -3,7 +3,6 @@
 
 using Files.App.ViewModels.Properties;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System.IO;
 
 namespace Files.App.ViewModels.Previews
 {
@@ -55,20 +54,6 @@ namespace Files.App.ViewModels.Previews
 				GetFileProperty("PropertyDateCreated", info.DateCreated),
 				GetFileProperty("PropertyParsingPath", folder.Path),
 			];
-
-			if (GitHelpers.IsRepositoryEx(Item.ItemPath, out var repoPath) &&
-				!string.IsNullOrEmpty(repoPath))
-			{
-				var gitDirectory = GitHelpers.GetGitRepositoryPath(folder.Path, Path.GetPathRoot(folder.Path));
-				var headName = (await GitHelpers.GetRepositoryHead(gitDirectory))?.Name ?? string.Empty;
-				var repositoryName = GitHelpers.GetOriginRepositoryName(gitDirectory);
-
-				if (!string.IsNullOrEmpty(gitDirectory))
-					Item.FileDetails.Add(GetFileProperty("GitOriginRepositoryName", repositoryName));
-
-				if (!string.IsNullOrWhiteSpace(headName))
-					Item.FileDetails.Add(GetFileProperty("GitCurrentBranch", headName));
-			}
 		}
 
 		private static FileProperty GetFileProperty(string nameResource, object? value)

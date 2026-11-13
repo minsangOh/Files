@@ -358,11 +358,6 @@ namespace Files.App.Helpers
 			UserSettingsService.LayoutSettingsService.ShowTypeColumn = !columns.ItemTypeColumn.UserCollapsed;
 			UserSettingsService.LayoutSettingsService.ShowSizeColumn = !columns.SizeColumn.UserCollapsed;
 			UserSettingsService.LayoutSettingsService.ShowFileTagColumn = !columns.TagColumn.UserCollapsed;
-			UserSettingsService.LayoutSettingsService.ShowGitStatusColumn = !columns.GitStatusColumn.UserCollapsed;
-			UserSettingsService.LayoutSettingsService.ShowGitLastCommitDateColumn = !columns.GitLastCommitDateColumn.UserCollapsed;
-			UserSettingsService.LayoutSettingsService.ShowGitLastCommitMessageColumn = !columns.GitLastCommitMessageColumn.UserCollapsed;
-			UserSettingsService.LayoutSettingsService.ShowGitCommitAuthorColumn = !columns.GitCommitAuthorColumn.UserCollapsed;
-			UserSettingsService.LayoutSettingsService.ShowGitLastCommitShaColumn = !columns.GitLastCommitShaColumn.UserCollapsed;
 			UserSettingsService.LayoutSettingsService.ShowDateDeletedColumn = !columns.DateDeletedColumn.UserCollapsed;
 			UserSettingsService.LayoutSettingsService.ShowPathColumn = !columns.PathColumn.UserCollapsed;
 			UserSettingsService.LayoutSettingsService.ShowOriginalPathColumn = !columns.OriginalPathColumn.UserCollapsed;
@@ -374,11 +369,6 @@ namespace Files.App.Helpers
 			UserSettingsService.LayoutSettingsService.TypeColumnWidth = columns.ItemTypeColumn.UserLengthPixels;
 			UserSettingsService.LayoutSettingsService.SizeColumnWidth = columns.SizeColumn.UserLengthPixels;
 			UserSettingsService.LayoutSettingsService.TagColumnWidth = columns.TagColumn.UserLengthPixels;
-			UserSettingsService.LayoutSettingsService.GitStatusColumnWidth = columns.GitStatusColumn.UserLengthPixels;
-			UserSettingsService.LayoutSettingsService.GitLastCommitDateColumnWidth = columns.GitLastCommitDateColumn.UserLengthPixels;
-			UserSettingsService.LayoutSettingsService.GitLastCommitMessageColumnWidth = columns.GitLastCommitMessageColumn.UserLengthPixels;
-			UserSettingsService.LayoutSettingsService.GitCommitAuthorColumnWidth = columns.GitCommitAuthorColumn.UserLengthPixels;
-			UserSettingsService.LayoutSettingsService.GitLastCommitShaColumnWidth = columns.GitLastCommitShaColumn.UserLengthPixels;
 			UserSettingsService.LayoutSettingsService.DateDeletedColumnWidth = columns.DateDeletedColumn.UserLengthPixels;
 			UserSettingsService.LayoutSettingsService.PathColumnWidth = columns.PathColumn.UserLengthPixels;
 			UserSettingsService.LayoutSettingsService.OriginalPathColumnWidth = columns.OriginalPathColumn.UserLengthPixels;
@@ -450,31 +440,6 @@ namespace Files.App.Helpers
 				{
 					UserSettingsService.LayoutSettingsService.ShowFileTagColumn = !preferencesItem.ColumnsViewModel.TagColumn.UserCollapsed;
 					UserSettingsService.LayoutSettingsService.TagColumnWidth = preferencesItem.ColumnsViewModel.TagColumn.UserLengthPixels;
-				}
-				if (!preferencesItem.ColumnsViewModel.GitStatusColumn.IsHidden)
-				{
-					UserSettingsService.LayoutSettingsService.ShowGitStatusColumn = !preferencesItem.ColumnsViewModel.GitStatusColumn.UserCollapsed;
-					UserSettingsService.LayoutSettingsService.GitStatusColumnWidth = preferencesItem.ColumnsViewModel.GitStatusColumn.UserLengthPixels;
-				}
-				if (!preferencesItem.ColumnsViewModel.GitLastCommitDateColumn.IsHidden)
-				{
-					UserSettingsService.LayoutSettingsService.ShowGitLastCommitDateColumn = !preferencesItem.ColumnsViewModel.GitLastCommitDateColumn.UserCollapsed;
-					UserSettingsService.LayoutSettingsService.GitLastCommitDateColumnWidth = preferencesItem.ColumnsViewModel.GitLastCommitDateColumn.UserLengthPixels;
-				}
-				if (!preferencesItem.ColumnsViewModel.GitLastCommitMessageColumn.IsHidden)
-				{
-					UserSettingsService.LayoutSettingsService.ShowGitLastCommitMessageColumn = !preferencesItem.ColumnsViewModel.GitLastCommitMessageColumn.UserCollapsed;
-					UserSettingsService.LayoutSettingsService.GitLastCommitMessageColumnWidth = preferencesItem.ColumnsViewModel.GitLastCommitMessageColumn.UserLengthPixels;
-				}
-				if (!preferencesItem.ColumnsViewModel.GitCommitAuthorColumn.IsHidden)
-				{
-					UserSettingsService.LayoutSettingsService.ShowGitCommitAuthorColumn = !preferencesItem.ColumnsViewModel.GitCommitAuthorColumn.UserCollapsed;
-					UserSettingsService.LayoutSettingsService.GitCommitAuthorColumnWidth = preferencesItem.ColumnsViewModel.GitCommitAuthorColumn.UserLengthPixels;
-				}
-				if (!preferencesItem.ColumnsViewModel.GitLastCommitShaColumn.IsHidden)
-				{
-					UserSettingsService.LayoutSettingsService.ShowGitLastCommitShaColumn = !preferencesItem.ColumnsViewModel.GitLastCommitShaColumn.UserCollapsed;
-					UserSettingsService.LayoutSettingsService.GitLastCommitShaColumnWidth = preferencesItem.ColumnsViewModel.GitLastCommitShaColumn.UserLengthPixels;
 				}
 				if (!preferencesItem.ColumnsViewModel.DateDeletedColumn.IsHidden)
 				{

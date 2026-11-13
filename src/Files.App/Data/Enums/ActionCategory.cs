@@ -11,7 +11,6 @@ namespace Files.App.Data.Enums
 		Edit,
 		FileSystem,
 		Grouping,
-		Git,
 		Image,
 		Install,
 		Layout,

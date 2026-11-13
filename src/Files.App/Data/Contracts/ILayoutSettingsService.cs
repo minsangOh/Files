@@ -71,31 +71,6 @@ namespace Files.App.Data.Contracts
 		bool ShowSizeColumn { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether or not the git status column should be visible by default.
-		/// </summary>
-		bool ShowGitStatusColumn { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether or not the git last commit date column should be visible by default.
-		/// </summary>
-		bool ShowGitLastCommitDateColumn { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether or not the git last commit message column should be visible by default.
-		/// </summary>
-		bool ShowGitLastCommitMessageColumn { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether or not the git last commit author column should be visible by default.
-		/// </summary>
-		bool ShowGitCommitAuthorColumn { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether or not the git last commit SHA column should be visible by default.
-		/// </summary>
-		bool ShowGitLastCommitShaColumn { get; set; }
-
-		/// <summary>
 		/// Gets or sets a value indicating whether or not the filetag column should be visible by default.
 		/// </summary>
 		bool ShowFileTagColumn { get; set; }
@@ -119,31 +94,6 @@ namespace Files.App.Data.Contracts
 		/// Gets or sets a value indicating whether or not the sync status column should be visible by default.
 		/// </summary>
 		bool ShowSyncStatusColumn { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating the width of the git status column
-		/// </summary>
-		double GitStatusColumnWidth { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating the width of the commit date column
-		/// </summary>
-		double GitLastCommitDateColumnWidth { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating the width of the commit message column
-		/// </summary>
-		double GitLastCommitMessageColumnWidth { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating the width of the git author column
-		/// </summary>
-		double GitCommitAuthorColumnWidth { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating the width of the git sha column
-		/// </summary>
-		double GitLastCommitShaColumnWidth { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating tags column's default width

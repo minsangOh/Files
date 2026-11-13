@@ -16,7 +16,6 @@ namespace Files.App.Data.Enums
 		Compress,
 		Successful,
 		Error,
-		Git,
 		InstallFont
 	}
 }

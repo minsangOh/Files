@@ -50,11 +50,6 @@ namespace Files.App.Helpers
 			ColumnsViewModel.DateModifiedColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowDateColumn;
 			ColumnsViewModel.ItemTypeColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowTypeColumn;
 			ColumnsViewModel.SizeColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowSizeColumn;
-			ColumnsViewModel.GitStatusColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowGitStatusColumn;
-			ColumnsViewModel.GitLastCommitDateColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowGitLastCommitDateColumn;
-			ColumnsViewModel.GitLastCommitMessageColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowGitLastCommitMessageColumn;
-			ColumnsViewModel.GitCommitAuthorColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowGitCommitAuthorColumn;
-			ColumnsViewModel.GitLastCommitShaColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowGitLastCommitShaColumn;
 			ColumnsViewModel.TagColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowFileTagColumn;
 			ColumnsViewModel.DateDeletedColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowDateDeletedColumn;
 			ColumnsViewModel.PathColumn.UserCollapsed = !UserSettingsService.LayoutSettingsService.ShowPathColumn;
@@ -66,11 +61,6 @@ namespace Files.App.Helpers
 			ColumnsViewModel.DateCreatedColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.DateCreatedColumnWidth;
 			ColumnsViewModel.ItemTypeColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.TypeColumnWidth;
 			ColumnsViewModel.SizeColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.SizeColumnWidth;
-			ColumnsViewModel.GitStatusColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.GitStatusColumnWidth;
-			ColumnsViewModel.GitLastCommitDateColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.GitLastCommitDateColumnWidth;
-			ColumnsViewModel.GitLastCommitMessageColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.GitLastCommitMessageColumnWidth;
-			ColumnsViewModel.GitCommitAuthorColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.GitCommitAuthorColumnWidth;
-			ColumnsViewModel.GitLastCommitShaColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.GitLastCommitShaColumnWidth;
 			ColumnsViewModel.TagColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.TagColumnWidth;
 			ColumnsViewModel.DateDeletedColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.DateDeletedColumnWidth;
 			ColumnsViewModel.PathColumn.UserLengthPixels = UserSettingsService.LayoutSettingsService.PathColumnWidth;

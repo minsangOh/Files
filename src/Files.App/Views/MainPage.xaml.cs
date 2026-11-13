@@ -211,11 +211,6 @@ namespace Files.App.Views
 
 			SidebarAdaptiveViewModel?.NotifyInstanceRelatedPropertiesChanged((navArgs as PaneNavigationArguments)?.LeftPaneNavPathParam);
 
-			// Safely access nested properties with null checks
-			var statusBarViewModel = SidebarAdaptiveViewModel?.PaneHolder?.ActivePaneOrColumn?.SlimContentPage?.StatusBarViewModel;
-			if (statusBarViewModel is not null)
-				statusBarViewModel.ShowLocals = true;
-
 			UpdateNavToolbarProperties();
 			LoadPaneChanged();
 

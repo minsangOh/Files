@@ -63,10 +63,6 @@ namespace Files.App.Data.Enums
 		/// </summary>
 		Compressed = 11,
 
-		/// <summary>
-		/// A Git operation has been performed
-		/// </summary>
-		Git = 12,
 
 		/// <summary>
 		/// A font has been installed

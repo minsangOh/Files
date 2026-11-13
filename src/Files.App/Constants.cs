@@ -8,9 +8,6 @@ namespace Files.App
 		// The following constants will be replaced with actual values by the Files CI workflow
 		public static class AutomatedWorkflowInjectionKeys
 		{
-
-			public const string GitHubClientId = "githubclientid.secret";
-
 			public const string BingMapsSecret = "bingmapskey.secret";
 		}
 

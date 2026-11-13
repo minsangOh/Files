@@ -19,9 +19,6 @@ public static partial class RegexHelpers
 	[GeneratedRegex(@"^[A-Z]:\\\$Recycle\.Bin\\", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
 	public static partial Regex RecycleBinPath();
 
-	[GeneratedRegex(@"^(?!/)(?!.*//)[^\000-\037\177 ~^:?*[]+(?!.*\.\.)(?!.*@\{)(?!.*\\)(?<!/\.)(?<!\.)(?<!/)(?<!\.lock)$")]
-	public static partial Regex GitBranchName();
-
 	[GeneratedRegex(@"\s+")]
 	public static partial Regex WhitespaceAtLeastOnce();
 

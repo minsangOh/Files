@@ -13,11 +13,6 @@ namespace Files.App.Data.Items
 	{
 		public const string Icon = "Icon";
 		public const string Name = "System.ItemNameDisplay";
-		public const string GitStatus = "Files.Git.Status";
-		public const string GitLastCommitDate = "Files.Git.LastCommitDate";
-		public const string GitLastCommitMessage = "Files.Git.LastCommitMessage";
-		public const string GitCommitAuthor = "Files.Git.CommitAuthor";
-		public const string GitLastCommitSha = "Files.Git.LastCommitSha";
 		public const string Tag = "Files.Tags";
 		public const string Path = "System.ItemPathDisplay";
 		public const string OriginalPath = "System.Recycle.DeletedFrom";

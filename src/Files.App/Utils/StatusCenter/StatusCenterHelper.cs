@@ -474,49 +474,6 @@ namespace Files.App.Utils.StatusCenter
 			}
 		}
 
-		public static StatusCenterItem AddCard_GitOperation(
-			GitStatusCenterOperationKind operationKind,
-			string repositoryPath,
-			ReturnResult returnStatus,
-			bool canProvideProgress = false,
-			string? operationTarget = null,
-			long itemsCount = 0,
-			CancellationTokenSource? operationCancellationToken = null)
-		{
-			var operationResourcePrefix = operationKind switch
-			{
-				GitStatusCenterOperationKind.Clone => "StatusCenter_GitClone",
-				GitStatusCenterOperationKind.Fetch => "StatusCenter_GitFetch",
-				GitStatusCenterOperationKind.Pull => "StatusCenter_GitPull",
-				GitStatusCenterOperationKind.Push => "StatusCenter_GitPush",
-				GitStatusCenterOperationKind.Sync => "StatusCenter_GitSync",
-				GitStatusCenterOperationKind.Checkout => "StatusCenter_GitCheckout",
-				_ => throw new ArgumentOutOfRangeException(nameof(operationKind)),
-			};
-			var resultResourceSuffix = returnStatus switch
-			{
-				ReturnResult.Cancelled => "Canceled",
-				ReturnResult.InProgress => "InProgress",
-				ReturnResult.Success => "Complete",
-				_ => "Failed",
-			};
-			var headerResource = $"{operationResourcePrefix}{resultResourceSuffix}_Header";
-			var subHeaderResource = operationKind is GitStatusCenterOperationKind.Clone
-				? $"{operationResourcePrefix}{resultResourceSuffix}_SubHeader"
-				: string.Empty;
-
-			return _statusCenterViewModel.AddItem(
-				headerResource,
-				subHeaderResource,
-				returnStatus,
-				FileOperationType.Git,
-				operationTarget?.CreateEnumerable(),
-				repositoryPath.CreateEnumerable(),
-				returnStatus is ReturnResult.InProgress && canProvideProgress,
-				itemsCount,
-				cancellationTokenSource: operationCancellationToken);
-		}
-
 		public static StatusCenterItem AddCard_InstallFont(
 			IEnumerable<string> source,
 			ReturnResult returnStatus,
@@ -710,29 +667,6 @@ namespace Files.App.Utils.StatusCenter
 						string subHeaderString = string.IsNullOrWhiteSpace(card.SubHeaderStringResource) ? string.Empty
 							: card.SubHeaderStringResource.GetLocalizedFormatResource(card.TotalItemsCount, sourcePath, destinationPath);
 						card.SubHeader = subHeaderString;
-						break;
-					}
-				case FileOperationType.Git:
-					{
-						var operationTarget = card.Source?.FirstOrDefault();
-						var repositoryPath = card.Destination?.FirstOrDefault() ?? string.Empty;
-						var isClone = card.HeaderStringResource?.StartsWith("StatusCenter_GitClone", StringComparison.Ordinal) is true;
-						var displayPath = isClone
-							? PathNormalization.GetParentDir(repositoryPath)
-							: repositoryPath;
-						var repositoryName = SystemIO.Path.GetFileName(displayPath.TrimEnd('\\', '/'));
-
-						if (string.IsNullOrEmpty(repositoryName))
-							repositoryName = displayPath;
-
-						card.Header = string.IsNullOrWhiteSpace(card.HeaderStringResource)
-							? string.Empty
-							: operationTarget is null
-								? card.HeaderStringResource.GetLocalizedFormatResource(repositoryName)
-								: card.HeaderStringResource.GetLocalizedFormatResource(operationTarget, repositoryName);
-						card.SubHeader = isClone && !string.IsNullOrWhiteSpace(card.SubHeaderStringResource)
-							? card.SubHeaderStringResource.GetLocalizedFormatResource(card.TotalItemsCount, operationTarget ?? string.Empty, displayPath)
-							: repositoryPath;
 						break;
 					}
 				case FileOperationType.InstallFont:

@@ -13,21 +13,11 @@ namespace Files.App.ViewModels.Settings
 		private readonly ICommonDialogService CommonDialogService = Ioc.Default.GetRequiredService<ICommonDialogService>();
 
 		public Dictionary<OpenInIDEOption, string> OpenInIDEOptions { get; private set; } = [];
-		public ICommand RemoveCredentialsCommand { get; }
-		public ICommand ConnectToGitHubCommand { get; }
 		public ICommand StartEditingIDECommand { get; }
 		public ICommand CancelIDEChangesCommand { get; }
 		public ICommand SaveIDEChangesCommand { get; }
 		public ICommand OpenFilePickerForIDECommand { get; }
 		public ICommand TestIDECommand { get; }
-
-		// Enabled when there are saved credentials
-		private bool _IsLogoutEnabled;
-		public bool IsLogoutEnabled
-		{
-			get => _IsLogoutEnabled;
-			set => SetProperty(ref _IsLogoutEnabled, value);
-		}
 
 		private bool _IsEditingIDEConfig;
 		public bool IsEditingIDEConfig
@@ -98,10 +88,6 @@ namespace Files.App.ViewModels.Settings
 			IsIDEPathValid = true;
 			IsIDENameValid = true;
 
-			IsLogoutEnabled = GitHelpers.GetSavedCredentials() != string.Empty;
-
-			RemoveCredentialsCommand = new RelayCommand(DoRemoveCredentials);
-			ConnectToGitHubCommand = new RelayCommand(DoConnectToGitHubAsync);
 			CancelIDEChangesCommand = new RelayCommand(DoCancelIDEChanges);
 			SaveIDEChangesCommand = new RelayCommand(DoSaveIDEChanges);
 			StartEditingIDECommand = new RelayCommand(DoStartEditingIDE);
@@ -144,21 +130,6 @@ namespace Files.App.ViewModels.Settings
 					DevToolsSettingsService.OpenInIDEOption = OpenInIDEOptions.First(e => e.Value == value).Key;
 				}
 			}
-		}
-
-		public void DoRemoveCredentials()
-		{
-			GitHelpers.RemoveSavedCredentials();
-			IsLogoutEnabled = false;
-		}
-
-		public async void DoConnectToGitHubAsync()
-		{
-			UIHelpers.CloseAllDialogs();
-
-			await Task.Delay(500);
-
-			await GitHelpers.RequireGitAuthenticationAsync();
 		}
 
 		private void DoCancelIDEChanges()

@@ -215,8 +215,6 @@ namespace Files.App.Views.Layouts
 				ApplyHeaderColumnOrder();
 			}
 
-			shellViewModel.EnabledGitProperties = GetEnabledGitProperties(ColumnsViewModel);
-
 			folderSettings.LayoutModeChangeRequested += FolderSettings_LayoutModeChangeRequested;
 			folderSettings.SortDirectionPreferenceUpdated += FolderSettings_SortDirectionPreferenceUpdated;
 			folderSettings.SortOptionPreferenceUpdated += FolderSettings_SortOptionPreferenceUpdated;
@@ -234,7 +232,6 @@ namespace Files.App.Views.Layouts
 			{
 				IsTypeCloudDrive = InstanceViewModel?.IsPageTypeCloudDrive ?? false,
 				IsTypeRecycleBin = InstanceViewModel?.IsPageTypeRecycleBin ?? false,
-				IsTypeGitRepository = InstanceViewModel?.IsGitRepository ?? false,
 				IsTypeSearchResults = InstanceViewModel?.IsPageTypeSearchResults ?? false
 			});
 
@@ -252,8 +249,6 @@ namespace Files.App.Views.Layouts
 				ColumnsViewModel.Columns = columns.Columns;
 				ColumnsViewModel.ColumnOrder = columns.ColumnOrder;
 				ApplyHeaderColumnOrder();
-				if (ParentShellPageInstance?.ShellViewModel is { } shellViewModel)
-					shellViewModel.EnabledGitProperties = GetEnabledGitProperties(ColumnsViewModel);
 			}
 		}
 
@@ -408,7 +403,6 @@ namespace Files.App.Views.Layouts
 					DetailsLayoutColumnIds.OriginalPath or DetailsLayoutColumnIds.DateDeleted => e.IsTypeRecycleBin,
 					DetailsLayoutColumnIds.Status => e.IsTypeCloudDrive,
 					DetailsLayoutColumnIds.Path => e.IsTypeSearchResults,
-					_ when definition.IsGitColumn => e.IsTypeGitRepository && !e.IsTypeSearchResults,
 					_ => true,
 				};
 
@@ -417,9 +411,6 @@ namespace Files.App.Views.Layouts
 				else
 					ColumnsViewModel.GetColumn(definition.Id).Hide();
 			}
-
-			if (ParentShellPageInstance?.ShellViewModel is { } shellViewModel)
-				shellViewModel.EnabledGitProperties = GetEnabledGitProperties(ColumnsViewModel);
 
 			UpdateSortIndicator();
 		}
@@ -639,17 +630,6 @@ namespace Files.App.Views.Layouts
 				else
 					return Task.CompletedTask;
 			}));
-
-			if (shellViewModel.EnabledGitProperties is not GitProperties.None)
-			{
-				await Task.WhenAll(filesAndFolders.Select(item =>
-				{
-					if (item is IGitItem gitItem)
-						return shellViewModel.LoadGitPropertiesAsync(gitItem);
-
-					return Task.CompletedTask;
-				}));
-			}
 		}
 
 		[DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
@@ -848,8 +828,6 @@ namespace Files.App.Views.Layouts
 		private void SaveColumnVisibility()
 		{
 			SaveColumnLayout();
-			var shellViewModel = ParentShellPageInstance.GetRequiredShellViewModel();
-			shellViewModel.EnabledGitProperties = GetEnabledGitProperties(ColumnsViewModel);
 		}
 
 		private void GridSplitter_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -917,7 +895,7 @@ namespace Files.App.Views.Layouts
 				DetailsLayoutColumnIds.Name => FileList.Items.Cast<ListedItem>().Select(x => x.Name?.Length ?? 0).Max(),
 				DetailsLayoutColumnIds.Tag => FileList.Items.Cast<ListedItem>().Select(x => x.FileTagsUI?.Sum(x => x?.Name?.Length ?? 0) ?? 0).Max(),
 				DetailsLayoutColumnIds.Size => FileList.Items.Cast<ListedItem>().Select(x => x.FileSize?.Length ?? 0).Max(),
-				DetailsLayoutColumnIds.GitStatus or DetailsLayoutColumnIds.Status => 0, // these columns only show icons
+				DetailsLayoutColumnIds.Status => 0, // this column only shows icons
 				_ => FileList.Items.Cast<ListedItem>().Select(x => DetailsLayoutColumnDefinitions.Get(columnId)?.GetText?.Invoke(x)?.Length ?? 0).Max(),
 			};
 
@@ -1759,24 +1737,6 @@ namespace Files.App.Views.Layouts
 		{
 			// Fixes an issue where double clicking the column header would navigate back as if clicking on empty space
 			e.Handled = true;
-		}
-
-		private static GitProperties GetEnabledGitProperties(ColumnsViewModel columnsViewModel)
-		{
-			bool IsShown(string id) => columnsViewModel.GetColumn(id) is { IsHidden: false, UserCollapsed: false };
-
-			var enableStatus = IsShown(DetailsLayoutColumnIds.GitStatus);
-			var enableCommit = IsShown(DetailsLayoutColumnIds.GitLastCommitDate)
-				|| IsShown(DetailsLayoutColumnIds.GitLastCommitMessage)
-				|| IsShown(DetailsLayoutColumnIds.GitCommitAuthor)
-				|| IsShown(DetailsLayoutColumnIds.GitLastCommitSha);
-			return (enableStatus, enableCommit) switch
-			{
-				(true, true) => GitProperties.All,
-				(true, false) => GitProperties.Status,
-				(false, true) => GitProperties.Commit,
-				(false, false) => GitProperties.None
-			};
 		}
 	}
 }

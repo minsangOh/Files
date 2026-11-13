@@ -151,32 +151,5 @@ namespace Files.App.Data.Models
 		{
 			get => !isPageTypeRecycleBin && !isPageTypeZipFolder;
 		}
-
-		private bool isGitRepository;
-		public bool IsGitRepository
-		{
-			get => isGitRepository;
-			set
-			{
-				SetProperty(ref isGitRepository, value);
-			}
-		}
-
-		private string? gitRepositoryPath;
-		public string? GitRepositoryPath
-		{
-			get => gitRepositoryPath;
-			set
-			{
-				SetProperty(ref gitRepositoryPath, value);
-			}
-		}
-
-		private string gitBranchName = string.Empty;
-		public string GitBranchName
-		{
-			get => gitBranchName;
-			set => SetProperty(ref gitBranchName, value);
-		}
 	}
 }

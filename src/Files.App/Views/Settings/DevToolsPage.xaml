@@ -209,28 +209,6 @@
 				</wctcontrols:SettingsExpander.ItemsHeader>
 			</wctcontrols:SettingsExpander>
 
-			<!--  Connect to GitHub  -->
-			<wctcontrols:SettingsCard
-				x:Name="ConnectToGitHubSection"
-				x:Load="{x:Bind ViewModel.IsLogoutEnabled, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
-				Header="{helpers:ResourceString Name=ConnectToGitHub}">
-				<wctcontrols:SettingsCard.HeaderIcon>
-					<FontIcon Glyph="&#xF0B9;" />
-				</wctcontrols:SettingsCard.HeaderIcon>
-				<Button Command="{x:Bind ViewModel.ConnectToGitHubCommand}" Content="{helpers:ResourceString Name=Login}" />
-			</wctcontrols:SettingsCard>
-
-			<!--  Remove credentials  -->
-			<wctcontrols:SettingsCard
-				x:Name="RemoveCredentialsSection"
-				x:Load="{x:Bind ViewModel.IsLogoutEnabled, Mode=OneWay}"
-				Header="{helpers:ResourceString Name=ConnectedToGitHub}">
-				<wctcontrols:SettingsCard.HeaderIcon>
-					<FontIcon Glyph="&#xF0B9;" />
-				</wctcontrols:SettingsCard.HeaderIcon>
-				<Button Command="{x:Bind ViewModel.RemoveCredentialsCommand}" Content="{helpers:ResourceString Name=Logout}" />
-			</wctcontrols:SettingsCard>
-
 		</StackPanel>
 
 		<VisualStateManager.VisualStateGroups>

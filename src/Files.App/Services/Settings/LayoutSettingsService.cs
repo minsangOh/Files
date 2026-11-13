@@ -65,56 +65,6 @@ namespace Files.App.Services.Settings
 			set => Set((long)value);
 		}
 
-		public double GitStatusColumnWidth
-		{
-			get => Get(80d);
-			set
-			{
-				if (ShowGitStatusColumn)
-					Set(value);
-			}
-		}
-
-		public double GitLastCommitDateColumnWidth
-		{
-			get => Get(140d);
-			set
-			{
-				if (ShowGitLastCommitDateColumn)
-					Set(value);
-			}
-		}
-
-		public double GitLastCommitMessageColumnWidth
-		{
-			get => Get(140d);
-			set
-			{
-				if (ShowGitLastCommitMessageColumn)
-					Set(value);
-			}
-		}
-
-		public double GitCommitAuthorColumnWidth
-		{
-			get => Get(140d);
-			set
-			{
-				if (ShowGitCommitAuthorColumn)
-					Set(value);
-			}
-		}
-
-		public double GitLastCommitShaColumnWidth
-		{
-			get => Get(80d);
-			set
-			{
-				if (ShowGitLastCommitShaColumn)
-					Set(value);
-			}
-		}
-
 		public double TagColumnWidth
 		{
 			get => Get(140d);
@@ -238,36 +188,6 @@ namespace Files.App.Services.Settings
 		public bool ShowSizeColumn
 		{
 			get => Get(true);
-			set => Set(value);
-		}
-
-		public bool ShowGitStatusColumn
-		{
-			get => Get(false);
-			set => Set(value);
-		}
-
-		public bool ShowGitLastCommitDateColumn
-		{
-			get => Get(false);
-			set => Set(value);
-		}
-
-		public bool ShowGitLastCommitMessageColumn
-		{
-			get => Get(false);
-			set => Set(value);
-		}
-
-		public bool ShowGitCommitAuthorColumn
-		{
-			get => Get(false);
-			set => Set(value);
-		}
-
-		public bool ShowGitLastCommitShaColumn
-		{
-			get => Get(false);
 			set => Set(value);
 		}
 

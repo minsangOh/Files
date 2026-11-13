@@ -10,7 +10,6 @@ namespace Files.App.Data.Models
 		[
 			nameof(IconColumn),
 			nameof(NameColumn),
-			nameof(GitStatusColumn),
 			nameof(TagColumn),
 			nameof(SizeColumn),
 			nameof(StatusColumn),
@@ -45,9 +44,6 @@ namespace Files.App.Data.Models
 		public DetailsLayoutColumnItem NameColumn => _columns[DetailsLayoutColumnIds.Name];
 
 		[RegistryIgnore, JsonIgnore]
-		public DetailsLayoutColumnItem GitStatusColumn => _columns[DetailsLayoutColumnIds.GitStatus];
-
-		[RegistryIgnore, JsonIgnore]
 		public DetailsLayoutColumnItem TagColumn => _columns[DetailsLayoutColumnIds.Tag];
 
 		[RegistryIgnore, JsonIgnore]
@@ -55,18 +51,6 @@ namespace Files.App.Data.Models
 
 		[RegistryIgnore, JsonIgnore]
 		public DetailsLayoutColumnItem StatusColumn => _columns[DetailsLayoutColumnIds.Status];
-
-		[RegistryIgnore, JsonIgnore]
-		public DetailsLayoutColumnItem GitLastCommitDateColumn => _columns[DetailsLayoutColumnIds.GitLastCommitDate];
-
-		[RegistryIgnore, JsonIgnore]
-		public DetailsLayoutColumnItem GitLastCommitMessageColumn => _columns[DetailsLayoutColumnIds.GitLastCommitMessage];
-
-		[RegistryIgnore, JsonIgnore]
-		public DetailsLayoutColumnItem GitCommitAuthorColumn => _columns[DetailsLayoutColumnIds.GitCommitAuthor];
-
-		[RegistryIgnore, JsonIgnore]
-		public DetailsLayoutColumnItem GitLastCommitShaColumn => _columns[DetailsLayoutColumnIds.GitLastCommitSha];
 
 		[RegistryIgnore, JsonIgnore]
 		public DetailsLayoutColumnItem PathColumn => _columns[DetailsLayoutColumnIds.Path];
@@ -101,21 +85,6 @@ namespace Files.App.Data.Models
 
 		[RegistryIgnore, JsonPropertyName("NameColumn")]
 		public DetailsLayoutColumnItem LegacyNameColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.Name, value); }
-
-		[RegistryIgnore, JsonPropertyName("GitStatusColumn")]
-		public DetailsLayoutColumnItem LegacyGitStatusColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.GitStatus, value); }
-
-		[RegistryIgnore, JsonPropertyName("GitLastCommitDateColumn")]
-		public DetailsLayoutColumnItem LegacyGitLastCommitDateColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.GitLastCommitDate, value); }
-
-		[RegistryIgnore, JsonPropertyName("GitLastCommitMessageColumn")]
-		public DetailsLayoutColumnItem LegacyGitLastCommitMessageColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.GitLastCommitMessage, value); }
-
-		[RegistryIgnore, JsonPropertyName("GitCommitAuthorColumn")]
-		public DetailsLayoutColumnItem LegacyGitCommitAuthorColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.GitCommitAuthor, value); }
-
-		[RegistryIgnore, JsonPropertyName("GitLastCommitShaColumn")]
-		public DetailsLayoutColumnItem LegacyGitLastCommitShaColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.GitLastCommitSha, value); }
 
 		[RegistryIgnore, JsonPropertyName("TagColumn")]
 		public DetailsLayoutColumnItem LegacyTagColumn { set => SetLegacyColumn(DetailsLayoutColumnIds.Tag, value); }

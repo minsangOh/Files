@@ -60,7 +60,6 @@ namespace Files.App.ViewModels.Settings
 				new ("https://github.com/omar/ByteSize", "ByteSize"),
 				new ("https://github.com/CommunityToolkit/dotnet", "CommunityToolkit.Mvvm"),
 				new ("https://github.com/DiscUtils/DiscUtils", "DiscUtils.Udf"),
-				new ("https://github.com/libgit2/libgit2sharp", "libgit2sharp"),
 				new ("https://github.com/jeffijoe/messageformat.net", "MessageFormat"),
 				new ("https://github.com/dotnet/efcore", "EF Core for SQLite"),
 				new ("https://github.com/dotnet/runtime", "Microsoft.Extensions"),

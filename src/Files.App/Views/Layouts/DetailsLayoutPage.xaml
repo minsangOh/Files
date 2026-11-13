@@ -471,23 +471,6 @@
 
 									</Grid>
 
-									<!--  Item Git Status  -->
-									<Border
-										x:Name="ItemGitStatusTextBlock"
-										Padding="10,0,0,0"
-										HorizontalAlignment="Stretch"
-										VerticalAlignment="Center"
-										ext:DetailsLayoutColumnExtensions.Id="Files.Git.Status"
-										x:Load="{x:Bind IsGitItem}">
-										<controls:ThemedIcon
-											Width="16"
-											Height="16"
-											HorizontalAlignment="Left"
-											Style="{x:Bind AsGitItem.UnmergedGitStatusIcon, Mode=OneWay}"
-											ToolTipService.ToolTip="{x:Bind AsGitItem.UnmergedGitStatusName, Mode=OneWay}"
-											Visibility="{Binding Path=ColumnsViewModel.GitStatusColumn.Visibility, ElementName=PageRoot, Mode=OneWay}" />
-									</Border>
-
 									<!--  Tags That Item Is Labeled  -->
 									<Grid
 										x:Name="ItemTagGrid"

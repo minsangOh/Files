@@ -55,8 +55,6 @@ namespace Files.App.Views
 			AppInstance.InstanceViewModel.IsPageTypeCloudDrive = false;
 			AppInstance.InstanceViewModel.IsPageTypeZipFolder = false;
 			AppInstance.InstanceViewModel.IsPageTypeLibrary = false;
-			AppInstance.InstanceViewModel.GitRepositoryPath = null;
-			AppInstance.InstanceViewModel.IsGitRepository = false;
 			AppInstance.InstanceViewModel.IsPageTypeSettings = false;
 			AppInstance.ToolbarViewModel.CanRefresh = true;
 			AppInstance.ToolbarViewModel.CanGoBack = AppInstance.CanNavigateBackward;
@@ -66,8 +64,6 @@ namespace Files.App.Views
 			// Set path of working directory empty
 			await shellViewModel.SetWorkingDirectoryAsync("Home");
 			shellViewModel.CheckForBackgroundImage();
-
-			AppInstance.SlimContentPage?.StatusBarViewModel.UpdateGitInfo(false, string.Empty, null);
 
 			AppInstance.ToolbarViewModel.PathComponents.Clear();
 
