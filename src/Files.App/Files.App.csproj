@@ -1,9 +1,9 @@
 ﻿<!--  Copyright (c) Files Community. Licensed under the MIT License.  -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="PublishWithSatoriGC" Version="10.0.15-satori.42242472690.2" />
-
     <PropertyGroup>
+        <!-- Standard workstation GC tuned for low memory instead of Satori -->
+        <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
         <EnableMsixTooling>true</EnableMsixTooling>
         <PublishProfile>Properties\PublishProfiles\win-$(Platform).pubxml</PublishProfile>
         <TargetFramework>$(WindowsTargetFramework)</TargetFramework>
@@ -46,6 +46,10 @@
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
         <FilesAppServerProject>$(MSBuildThisFileDirectory)..\Files.App.Server\Files.App.Server.csproj</FilesAppServerProject>
     </PropertyGroup>
+
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+    </ItemGroup>
 
     <PropertyGroup>
         <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
