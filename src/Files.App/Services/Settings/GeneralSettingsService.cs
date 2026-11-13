@@ -109,25 +109,25 @@ namespace Files.App.Services.Settings
 
 		public bool ShowQuickAccessWidget
 		{
-			get => Get(true);
+			get => Get(false);
 			set => Set(value);
 		}
 
 		public bool ShowRecentFilesWidget
 		{
-			get => Get(true);
+			get => Get(false);
 			set => Set(value);
 		}
 
 		public bool ShowDrivesWidget
 		{
-			get => Get(true);
+			get => Get(false);
 			set => Set(value);
 		}
 
 		public bool ShowNetworkLocationsWidget
 		{
-			get => Get(true);
+			get => Get(false);
 			set => Set(value);
 		}
 
