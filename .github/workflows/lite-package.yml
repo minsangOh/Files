@@ -1,0 +1,90 @@
+# Files Lite fork: builds a signed Release x64 sideload package.
+# ci.yml is upstream-owned and skipped outside files-community, so this file
+# carries only the packaging steps from its build job.
+
+name: Lite Package
+
+on:
+  push:
+    branches:
+      - lite-main
+      - 'lite/**'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+env:
+  SOLUTION_PATH: '${{ github.workspace }}\Files.slnx'
+  APP_PROJECT_PATH: '${{ github.workspace }}\src\Files.App\Files.App.csproj'
+  ARTIFACTS_STAGING_DIR: '${{ github.workspace }}\artifacts'
+  APPX_PACKAGE_DIR: '${{ github.workspace }}\artifacts\AppxPackages\'
+  APPX_SELFSIGNED_CERT_PATH: '${{ github.workspace }}\.github\workflows\FilesApp_SelfSigned.pfx'
+  CONFIGURATION: Release
+  ARCHITECTURE: x64
+
+jobs:
+
+  package:
+
+    if: github.repository == 'minsangOh/Files'
+
+    runs-on: windows-2025-vs2026
+
+    steps:
+
+    - name: Checkout the repository
+      uses: actions/checkout@v6
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v3
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: global.json
+
+    - name: Restore Files
+      shell: pwsh
+      run: |
+        msbuild $env:SOLUTION_PATH `
+          -t:Restore `
+          -p:Platform=$env:ARCHITECTURE `
+          -p:Configuration=$env:CONFIGURATION `
+          -p:PublishReadyToRun=true `
+          -v:quiet
+
+    - name: Create self signed cert as a pfx file
+      run: ./.github/scripts/Generate-SelfCertPfx.ps1 -Destination "$env:APPX_SELFSIGNED_CERT_PATH"
+
+    - name: Build & package Files
+      run: |
+        msbuild `
+          -warnaserror `
+          -warnnotaserror:CS0612,CS0618,CS0672,IL2104 `
+          $env:APP_PROJECT_PATH `
+          -t:Build `
+          -p:Configuration=$env:CONFIGURATION `
+          -p:Platform=$env:ARCHITECTURE `
+          -p:AppxBundlePlatforms=$env:ARCHITECTURE `
+          -p:AppxBundle=Always `
+          -p:GenerateAppxPackageOnBuild=true `
+          -p:UapAppxPackageBuildMode=SideloadOnly `
+          -p:AppxPackageDir=$env:APPX_PACKAGE_DIR `
+          -p:AppxPackageSigningEnabled=true `
+          -p:PackageCertificateKeyFile=$env:APPX_SELFSIGNED_CERT_PATH `
+          -p:PackageCertificatePassword="" `
+          -p:PackageCertificateThumbprint="" `
+          -v:quiet
+
+    # Publish only the public certificate so the package can be trusted locally
+    - name: Export public certificate
+      shell: pwsh
+      run: |
+        $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($env:APPX_SELFSIGNED_CERT_PATH, "")
+        [System.IO.File]::WriteAllBytes("$env:APPX_PACKAGE_DIR\FilesApp_SelfSigned.cer", $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert))
+
+    - name: Upload the package to the Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: 'Files Lite Package (${{ env.CONFIGURATION }}, ${{ env.ARCHITECTURE }})'
+        path: ${{ env.APPX_PACKAGE_DIR }}
