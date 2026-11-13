@@ -72,7 +72,6 @@ namespace Files.App.Data.Factories
 			return
 				(item.ShowInRecycleBin || !currentInstanceViewModel.IsPageTypeRecycleBin) &&
 				(item.ShowInSearchPage || !currentInstanceViewModel.IsPageTypeSearchResults) &&
-				(item.ShowInFtpPage || !currentInstanceViewModel.IsPageTypeFtp) &&
 				(item.ShowInZipPage || !currentInstanceViewModel.IsPageTypeZipFolder) &&
 				(!item.SingleItemOnly || selectedItems.Count == 1) &&
 				item.ShowItem;
@@ -117,7 +116,6 @@ namespace Files.App.Data.Factories
 					ShowItem = !itemsSelected,
 					ShowInRecycleBin = true,
 					ShowInSearchPage = true,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					Items =
 					[
@@ -157,7 +155,6 @@ namespace Files.App.Data.Factories
 					ShowItem = !itemsSelected,
 					ShowInRecycleBin = true,
 					ShowInSearchPage = true,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					Items =
 					[
@@ -206,7 +203,6 @@ namespace Files.App.Data.Factories
 							ItemType = ContextMenuFlyoutItemType.Separator,
 							ShowInRecycleBin = true,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 						},
 						new ContextMenuFlyoutItemViewModelBuilder(Commands.SortAscending)
@@ -226,7 +222,6 @@ namespace Files.App.Data.Factories
 					ShowItem = !itemsSelected,
 					ShowInRecycleBin = true,
 					ShowInSearchPage = true,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					Items =
 					[
@@ -243,7 +238,6 @@ namespace Files.App.Data.Factories
 							Text = Strings.DateModifiedLowerCase.GetLocalizedResource(),
 							ShowInRecycleBin = true,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 							Items =
 							[
@@ -266,7 +260,6 @@ namespace Files.App.Data.Factories
 							Text = Strings.DateCreated.GetLocalizedResource(),
 							ShowInRecycleBin = true,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 							Items =
 							[
@@ -334,7 +327,6 @@ namespace Files.App.Data.Factories
 							ItemType = ContextMenuFlyoutItemType.Separator,
 							ShowInRecycleBin = true,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 						},
 						new ContextMenuFlyoutItemViewModelBuilder(Commands.GroupAscending)
@@ -356,7 +348,6 @@ namespace Files.App.Data.Factories
 				new ContextMenuFlyoutItemViewModel()
 				{
 					ItemType = ContextMenuFlyoutItemType.Separator,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					ShowItem = !itemsSelected
 				},
@@ -369,7 +360,6 @@ namespace Files.App.Data.Factories
 					Text = Commands.AddItem.Label,
 					Items = GetNewItemItems(commandsViewModel, currentInstanceViewModel.CanCreateFileInPage),
 					ShowItem = !itemsSelected,
-					ShowInFtpPage = true
 				},
 				new ContextMenuFlyoutItemViewModelBuilder(Commands.EmptyRecycleBin)
 				{
@@ -424,7 +414,6 @@ namespace Files.App.Data.Factories
 					ShowItem = UserSettingsService.GeneralSettingsService.ShowOpenInNewPane && itemsSelected && areAllItemsFolders && !currentInstanceViewModel.IsPageTypeRecycleBin && Commands.OpenInNewPane.IsExecutable,
 					IsEnabled = Commands.OpenInNewPane.IsExecutable,
 					ShowInSearchPage = true,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					Items =
 					[
@@ -435,7 +424,6 @@ namespace Files.App.Data.Factories
 							Command = Commands.OpenInNewPane,
 							CommandParameter = ShellPaneArrangement.Vertical,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 						},
 						new ContextMenuFlyoutItemViewModel()
@@ -445,7 +433,6 @@ namespace Files.App.Data.Factories
 							Command = Commands.OpenInNewPane,
 							CommandParameter = ShellPaneArrangement.Horizontal,
 							ShowInSearchPage = true,
-							ShowInFtpPage = true,
 							ShowInZipPage = true,
 						},
 					]
@@ -485,7 +472,6 @@ namespace Files.App.Data.Factories
 				{
 					ItemType = ContextMenuFlyoutItemType.Separator,
 					ShowInSearchPage = true,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					ShowItem = itemsSelected
 				},
@@ -657,14 +643,13 @@ namespace Files.App.Data.Factories
 				}.Build(),
 				new ContextMenuFlyoutItemViewModelBuilder(Commands.OpenStorageSense).Build(),
 				new ContextMenuFlyoutItemViewModelBuilder(Commands.FormatDrive).Build(),
-				// Shell extensions are not available on the FTP server or in the archive,
+				// Shell extensions are not available in the archive,
 				// but following items are intentionally added because icons in the context menu will not appear
 				// unless there is at least one menu item with an icon that is not an ThemedIconModel. (#12943)
 				new ContextMenuFlyoutItemViewModel()
 				{
 					ItemType = ContextMenuFlyoutItemType.Separator,
 					Tag = "OverflowSeparator",
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					ShowInRecycleBin = true,
 					ShowInSearchPage = true,
@@ -676,7 +661,6 @@ namespace Files.App.Data.Factories
 					Items = [],
 					ID = "ItemOverflow",
 					Tag = "ItemOverflow",
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					ShowInRecycleBin = true,
 					ShowInSearchPage = true,
@@ -695,7 +679,6 @@ namespace Files.App.Data.Factories
 					Text = Strings.File.GetLocalizedResource(),
 					Glyph = "\uE7C3",
 					Command = commandsViewModel.CreateNewFileCommand,
-					ShowInFtpPage = true,
 					ShowInZipPage = true,
 					IsEnabled = canCreateFileInPage
 				},

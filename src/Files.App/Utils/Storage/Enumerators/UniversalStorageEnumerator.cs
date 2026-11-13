@@ -101,7 +101,7 @@ namespace Files.App.Utils.Storage
 								tempList.Add(folder);
 
 								// The size provider enumerates with Win32, which reports size 0 for
-								// virtual paths (ftp, archives) it cannot traverse; skip those
+								// virtual paths (archives) it cannot traverse; skip those
 								if (calculateFolderSizes && FolderHelpers.CheckFolderAccessWithWin32(folderPath))
 								{
 									if (folderSizeProvider.TryGetSize(folderPath, out var size))

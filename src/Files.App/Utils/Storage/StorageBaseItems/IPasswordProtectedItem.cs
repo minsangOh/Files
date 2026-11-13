@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Files Community
 // Licensed under the MIT License.
 
-using FluentFTP.Exceptions;
 using SevenZip;
 
 namespace Files.App.Utils.Storage
@@ -16,7 +15,6 @@ namespace Files.App.Utils.Storage
 		{
 			var handled = exception is SevenZipOpenFailedException szofex && szofex.Result is OperationResult.WrongPassword ||
 				exception is ExtractionFailedException efex && efex.Result is OperationResult.WrongPassword ||
-				exception is FtpAuthenticationException ||
 				exception is ICSharpCode.SharpZipLib.Zip.ZipException szlzex && szlzex.Message.Contains("password");
 
 			if (!handled || PasswordRequestedCallback is null)
@@ -31,7 +29,6 @@ namespace Files.App.Utils.Storage
 		{
 			var handled = exception is SevenZipOpenFailedException szofex && szofex.Result is OperationResult.WrongPassword ||
 				exception is ExtractionFailedException efex && efex.Result is OperationResult.WrongPassword ||
-				exception is FtpAuthenticationException ||
 				exception is ICSharpCode.SharpZipLib.Zip.ZipException szlzex && szlzex.Message.Contains("password");
 
 			if (!handled || PasswordRequestedCallback is null)

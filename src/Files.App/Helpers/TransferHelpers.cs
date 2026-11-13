@@ -114,34 +114,25 @@ namespace Files.App.Helpers
 						statusCenterItem.Progress.Report();
 					}
 
-					if (listedItem is FtpItem ftpItem)
+					if (type is DataPackageOperation.Move)
 					{
-						// Don't dim selected items here since FTP doesn't support cut
-						if (ftpItem.PrimaryItemAttribute is StorageItemTypes.File or StorageItemTypes.Folder)
-							items.Add(await ftpItem.ToStorageItem());
-					}
-					else
-					{
-						if (type is DataPackageOperation.Move)
+						// Dim opacities accordingly
+						await MainWindow.Instance.DispatcherQueue.EnqueueOrInvokeAsync(() =>
 						{
-							// Dim opacities accordingly
-							await MainWindow.Instance.DispatcherQueue.EnqueueOrInvokeAsync(() =>
-							{
-								listedItem.Opacity = Constants.UI.DimItemOpacity;
-							});
-						}
-
-						var shellViewModel = context.ShellPage.GetRequiredShellViewModel();
-						var itemPath = listedItem.GetRequiredPath();
-						var result = listedItem.PrimaryItemAttribute == StorageItemTypes.File || listedItem is ZipItem
-								? await shellViewModel.GetFileFromPathAsync(itemPath).OnSuccess(t => items.Add(t
-									?? throw new InvalidOperationException($"The file '{itemPath}' could not be opened.")))
-								: await shellViewModel.GetFolderFromPathAsync(itemPath).OnSuccess(t => items.Add(t
-									?? throw new InvalidOperationException($"The folder '{itemPath}' could not be opened.")));
-
-						if (!result)
-							throw new SystemIO.IOException($"Failed to process {listedItem.ItemPath} in cutting/copying to the clipboard.", (int)result.ErrorCode);
+							listedItem.Opacity = Constants.UI.DimItemOpacity;
+						});
 					}
+
+					var shellViewModel = context.ShellPage.GetRequiredShellViewModel();
+					var itemPath = listedItem.GetRequiredPath();
+					var result = listedItem.PrimaryItemAttribute == StorageItemTypes.File || listedItem is ZipItem
+							? await shellViewModel.GetFileFromPathAsync(itemPath).OnSuccess(t => items.Add(t
+								?? throw new InvalidOperationException($"The file '{itemPath}' could not be opened.")))
+							: await shellViewModel.GetFolderFromPathAsync(itemPath).OnSuccess(t => items.Add(t
+								?? throw new InvalidOperationException($"The folder '{itemPath}' could not be opened.")));
+
+					if (!result)
+						throw new SystemIO.IOException($"Failed to process {listedItem.ItemPath} in cutting/copying to the clipboard.", (int)result.ErrorCode);
 				}, 10, statusCenterItem?.CancellationToken ?? CancellationToken.None);
 
 				var standardObjectsOnly = items.All(x => x is StorageFile or StorageFolder or SystemStorageFile or SystemStorageFolder);

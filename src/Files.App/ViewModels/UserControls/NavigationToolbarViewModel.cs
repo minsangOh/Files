@@ -591,8 +591,7 @@ namespace Files.App.ViewModels.UserControls
 			}
 
 			var currentPath = PathComponents.LastOrDefault()?.Path;
-			var isFtp = FtpHelpers.IsFtpPath(path);
-			var normalizedInput = NormalizePathInput(path, isFtp);
+			var normalizedInput = NormalizePathInput(path);
 			if (currentPath is not null && currentPath.Equals(normalizedInput, StringComparison.OrdinalIgnoreCase) ||
 				string.IsNullOrWhiteSpace(normalizedInput))
 				return true;
@@ -616,7 +615,7 @@ namespace Files.App.ViewModels.UserControls
 			}
 			else
 			{
-				normalizedInput = StorageFileExtensions.GetResolvedPath(normalizedInput, isFtp);
+				normalizedInput = StorageFileExtensions.GetResolvedPath(normalizedInput);
 				if (currentPath is not null && currentPath.Equals(normalizedInput, StringComparison.OrdinalIgnoreCase))
 					return true;
 
@@ -643,11 +642,6 @@ namespace Files.App.ViewModels.UserControls
 					var pathToNavigate = resFolder.Result?.Path ?? normalizedInput;
 					SavePathToHistory(pathToNavigate);
 					shellPage.NavigateToPath(pathToNavigate);
-				}
-				else if (isFtp)
-				{
-					SavePathToHistory(normalizedInput);
-					shellPage.NavigateToPath(normalizedInput);
 				}
 				else // Not a folder or inaccessible
 				{
@@ -762,7 +756,7 @@ namespace Files.App.ViewModels.UserControls
 
 			var childFolders = GetSubfolders(path);
 
-			// Fall back to StorageFolder API for non-filesystem paths (e.g. FTP)
+			// Fall back to StorageFolder API for non-filesystem paths
 			if (childFolders is null)
 			{
 				var shellPage = ContentPageContext.ShellPage
@@ -881,9 +875,9 @@ namespace Files.App.ViewModels.UserControls
 				flyoutItem.Icon = new ImageIcon { Source = imageSource };
 		}
 
-		private static string NormalizePathInput(string currentInput, bool isFtp)
+		private static string NormalizePathInput(string currentInput)
 		{
-			if (currentInput.Contains('/') && !isFtp)
+			if (currentInput.Contains('/'))
 				currentInput = currentInput.Replace('/', '\\');
 
 			currentInput = currentInput.Replace("\\\\", "\\", StringComparison.Ordinal);
@@ -917,9 +911,7 @@ namespace Files.App.ViewModels.UserControls
 				return;
 			}
 
-			var isFtp = FtpHelpers.IsFtpPath(currentInput);
-
-			var normalizedInput = NormalizePathInput(currentInput, isFtp);
+			var normalizedInput = NormalizePathInput(currentInput);
 
 			if (currentSelectedPath == normalizedInput || string.IsNullOrWhiteSpace(normalizedInput))
 				return;
@@ -938,7 +930,7 @@ namespace Files.App.ViewModels.UserControls
 				}
 				else
 				{
-					normalizedInput = StorageFileExtensions.GetResolvedPath(normalizedInput, isFtp);
+					normalizedInput = StorageFileExtensions.GetResolvedPath(normalizedInput);
 					if (currentSelectedPath == normalizedInput)
 						return;
 
@@ -961,11 +953,6 @@ namespace Files.App.ViewModels.UserControls
 						var pathToNavigate = resFolder.Result?.Path ?? normalizedInput;
 						SavePathToHistory(pathToNavigate);
 						shellPage.NavigateToPath(pathToNavigate);
-					}
-					else if (isFtp)
-					{
-						SavePathToHistory(normalizedInput);
-						shellPage.NavigateToPath(normalizedInput);
 					}
 					else // Not a folder or inaccessible
 					{
@@ -1093,9 +1080,8 @@ namespace Files.App.ViewModels.UserControls
 					if (FolderAliasHelpers.HasPrefix(pathText) && FolderAliasHelpers.TryResolve(pathText, FolderAliasHelpers.Aliases, out var aliasPath))
 						pathText = aliasPath;
 
-					var isFtp = FtpHelpers.IsFtpPath(pathText);
-					pathText = NormalizePathInput(pathText, isFtp);
-					var expandedPath = StorageFileExtensions.GetResolvedPath(pathText, isFtp);
+					pathText = NormalizePathInput(pathText);
+					var expandedPath = StorageFileExtensions.GetResolvedPath(pathText);
 					var folderPath = PathNormalization.GetParentDir(expandedPath) ?? expandedPath;
 					var shellViewModel = ContentPageContext.ShellPage?.ShellViewModel
 						?? throw new InvalidOperationException("The current shell page does not have a view model.");

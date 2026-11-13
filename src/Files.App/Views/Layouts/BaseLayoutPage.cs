@@ -558,7 +558,6 @@ namespace Files.App.Views.Layouts
 				parentShellPage.ToolbarViewModel.CanNavigateToParent = !(string.IsNullOrEmpty(pathRoot) || isRecycleBin);
 
 				parentShellPage.InstanceViewModel.IsPageTypeMtpDevice = workingDir.StartsWith("\\\\?\\", StringComparison.Ordinal);
-				parentShellPage.InstanceViewModel.IsPageTypeFtp = FtpHelpers.IsFtpPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeZipFolder = ZipStorageFolder.IsZipPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeLibrary = LibraryManager.IsLibraryPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeSettings = false;
@@ -594,7 +593,6 @@ namespace Files.App.Views.Layouts
 
 				parentShellPage.InstanceViewModel.IsPageTypeRecycleBin = workingDir.StartsWith(Constants.UserEnvironmentPaths.RecycleBinPath, StringComparison.Ordinal);
 				parentShellPage.InstanceViewModel.IsPageTypeMtpDevice = workingDir.StartsWith("\\\\?\\", StringComparison.Ordinal);
-				parentShellPage.InstanceViewModel.IsPageTypeFtp = FtpHelpers.IsFtpPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeZipFolder = ZipStorageFolder.IsZipPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeLibrary = LibraryManager.IsLibraryPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeSettings = false;
@@ -710,7 +708,7 @@ namespace Files.App.Views.Layouts
 
 				// Shell extensions. Open with / Send to and packaged app commands belong in the MAIN menu; the rest go
 				// under "Show more options".
-				if (!instanceViewModel.IsPageTypeZipFolder && !instanceViewModel.IsPageTypeFtp)
+				if (!instanceViewModel.IsPageTypeZipFolder)
 				{
 					var token = host.BeginShellMenuLoad(cancellationToken);
 
@@ -981,7 +979,7 @@ namespace Files.App.Views.Layouts
 				var host = BaseContextFlyoutHost;
 				host.Build(items);
 
-				if (!instanceViewModel.IsPageTypeSearchResults && !instanceViewModel.IsPageTypeZipFolder && !instanceViewModel.IsPageTypeFtp)
+				if (!instanceViewModel.IsPageTypeSearchResults && !instanceViewModel.IsPageTypeZipFolder)
 				{
 					var token = host.BeginShellMenuLoad(cancellationToken);
 

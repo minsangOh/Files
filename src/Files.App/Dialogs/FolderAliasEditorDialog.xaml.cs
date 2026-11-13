@@ -68,7 +68,7 @@ namespace Files.App.Dialogs
 			var deferral = args.GetDeferral();
 			try
 			{
-				var resolvedPath = StorageFileExtensions.GetResolvedPath(AliasPath, false);
+				var resolvedPath = StorageFileExtensions.GetResolvedPath(AliasPath);
 				if (!Path.IsPathFullyQualified(resolvedPath) || !await Task.Run(() => Directory.Exists(resolvedPath)))
 				{
 					PathErrorTextBlock.Text = Strings.FolderAliasPathNotFound.GetLocalizedResource();

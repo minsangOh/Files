@@ -1,7 +1,6 @@
 // Copyright (c) Files Community
 // Licensed under the MIT License.
 
-using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using Windows.Storage;
@@ -14,9 +13,6 @@ namespace Files.App.Utils.Storage
 	{
 		private const int SINGLE_DOT_DIRECTORY_LENGTH = 2;
 		private const int DOUBLE_DOT_DIRECTORY_LENGTH = 3;
-
-		public static readonly ImmutableHashSet<string> _ftpPaths =
-			new HashSet<string>() { "ftp:/", "ftps:/", "ftpes:/" }.ToImmutableHashSet();
 
 		[DynamicWindowsRuntimeCast(typeof(StorageFile))]
 		public static BaseStorageFile? AsBaseStorageFile(this IStorageItem? item)
@@ -166,8 +162,7 @@ namespace Files.App.Utils.Storage
 
 					var component = value.Substring(lastIndex, i - lastIndex);
 					var path = value.Substring(0, i + 1);
-					if (!_ftpPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
-						pathBoxItems.Add(GetPathItem(component, path));
+					pathBoxItems.Add(GetPathItem(component, path));
 
 					lastIndex = i + 1;
 				}
@@ -201,10 +196,10 @@ namespace Files.App.Utils.Storage
 			return pathBoxItems;
 		}
 
-		public static string GetResolvedPath(string path, bool isFtp)
+		public static string GetResolvedPath(string path)
 		{
 			var withoutEnvirnment = GetPathWithoutEnvironmentVariable(path);
-			return ResolvePath(withoutEnvirnment, isFtp);
+			return ResolvePath(withoutEnvirnment);
 		}
 
 		public async static Task<BaseStorageFile?> DangerousGetFileFromPathAsync
@@ -247,7 +242,7 @@ namespace Files.App.Utils.Storage
 				}
 			}
 
-			var fullPath = (parentFolder is not null && !FtpHelpers.IsFtpPath(value) && !Path.IsPathRooted(value) && !ShellStorageFolder.IsShellPath(value)) // "::{" not a valid root
+			var fullPath = (parentFolder is not null && !Path.IsPathRooted(value) && !ShellStorageFolder.IsShellPath(value)) // "::{" not a valid root
 				? Path.GetFullPath(Path.Combine(parentFolder.Path, value)) // Relative path
 				: value;
 			var item = await BaseStorageFile.GetFileFromPathAsync(fullPath)
@@ -305,7 +300,7 @@ namespace Files.App.Utils.Storage
 				}
 			}
 
-			var fullPath = (parentFolder is not null && !FtpHelpers.IsFtpPath(value) && !Path.IsPathRooted(value) && !ShellStorageFolder.IsShellPath(value)) // "::{" not a valid root
+			var fullPath = (parentFolder is not null && !Path.IsPathRooted(value) && !ShellStorageFolder.IsShellPath(value)) // "::{" not a valid root
 				? Path.GetFullPath(Path.Combine(parentFolder.Path, value)) // Relative path
 				: value;
 			var item = await BaseStorageFolder.GetFolderFromPathAsync(fullPath);
@@ -393,7 +388,7 @@ namespace Files.App.Utils.Storage
 			return Environment.ExpandEnvironmentVariables(path);
 		}
 
-		private static string ResolvePath(string path, bool isFtp)
+		private static string ResolvePath(string path)
 		{
 			if (path.StartsWith("Home"))
 				return "Home";
@@ -406,8 +401,8 @@ namespace Files.App.Utils.Storage
 
 			var pathBuilder = new StringBuilder(path);
 			var lastPathIndex = path.Length - 1;
-			var separatorChar = isFtp || path.Contains('/', StringComparison.Ordinal) ? '/' : '\\';
-			var rootIndex = isFtp ? FtpHelpers.GetRootIndex(path) + 1 : path.IndexOf($":{separatorChar}", StringComparison.Ordinal) + 2;
+			var separatorChar = path.Contains('/', StringComparison.Ordinal) ? '/' : '\\';
+			var rootIndex = path.IndexOf($":{separatorChar}", StringComparison.Ordinal) + 2;
 
 			for (int i = 0, lastIndex = 0; i < pathBuilder.Length; i++)
 			{

@@ -38,9 +38,6 @@ namespace Files.App.Actions
 			{
 				var path = shellPage.GetRequiredShellViewModel().WorkingDirectory;
 
-				if (FtpHelpers.IsFtpPath(path))
-					path = path.Replace('\\', '/');
-
 				SafetyExtensions.IgnoreExceptions(() =>
 				{
 					DataPackage data = new();

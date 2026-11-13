@@ -37,7 +37,6 @@ namespace Files.App.Utils
 		bool IsElevationRequired { get; set; }
 		bool IsExecutable { get; }
 		bool IsFolder { get; }
-		bool IsFtpItem { get; }
 		bool IsGitItem { get; }
 		bool IsHiddenItem { get; set; }
 		bool IsItemPinnedToStart { get; }

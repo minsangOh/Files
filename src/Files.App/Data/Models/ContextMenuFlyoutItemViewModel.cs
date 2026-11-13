@@ -41,8 +41,6 @@ namespace Files.App.Data.Models
 
 		public bool ShowInSearchPage { get; set; }
 
-		public bool ShowInFtpPage { get; set; }
-
 		public bool ShowInZipPage { get; set; }
 
 		public KeyboardAccelerator? KeyboardAccelerator { get; set; }

@@ -4,7 +4,6 @@
 using Files.App.Dialogs;
 using Microsoft.Extensions.Logging;
 using System.IO;
-using System.Net;
 using System.Text;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -275,10 +274,7 @@ namespace Files.App.Helpers
 
 		public async static Task<StorageCredential> RequestPassword(IPasswordProtectedItem sender)
 		{
-			var path = ((IStorageItem)sender).Path;
-			var isFtp = FtpHelpers.IsFtpPath(path);
-
-			var credentialDialogViewModel = new CredentialDialogViewModel() { CanBeAnonymous = isFtp, PasswordOnly = !isFtp };
+			var credentialDialogViewModel = new CredentialDialogViewModel() { PasswordOnly = true };
 
 			if (sender is ZipStorageFolder zipFolder)
 			{
@@ -304,12 +300,6 @@ namespace Files.App.Helpers
 			// Can't do more than that to mitigate immutability of strings. Perhaps convert DisposableArray to SecureString immediately?
 			var credentials = new StorageCredential(credentialDialogViewModel.UserName, Encoding.UTF8.GetString(password));
 			password.Dispose();
-
-			if (isFtp)
-			{
-				var host = FtpHelpers.GetFtpHost(path);
-				FtpManager.Credentials[host] = new NetworkCredential(credentials.UserName, credentials.SecurePassword);
-			}
 
 			return credentials;
 		}

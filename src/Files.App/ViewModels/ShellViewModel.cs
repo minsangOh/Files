@@ -254,11 +254,7 @@ namespace Files.App.ViewModels
 
 			WorkingDirectory = value;
 
-			string? pathRoot = null;
-			if (!FtpHelpers.IsFtpPath(WorkingDirectory))
-			{
-				pathRoot = Path.GetPathRoot(WorkingDirectory);
-			}
+			string? pathRoot = Path.GetPathRoot(WorkingDirectory);
 
 			var gitDirectory = await Task.Run(() => GitHelpers.GetGitRepositoryPath(value, pathRoot));
 			if (isDisposed || WorkingDirectory != value)
@@ -1719,7 +1715,7 @@ namespace Files.App.ViewModels
 					token.ThrowIfCancellationRequested();
 					if (item.IsLibrary || item.PrimaryItemAttribute == StorageItemTypes.File || item.IsArchive)
 					{
-						if (!item.IsShortcut && !FtpHelpers.IsFtpPath(item.ItemPath))
+						if (!item.IsShortcut)
 						{
 							matchingStorageFile = await GetFileFromPathAsync(item.GetRequiredPath(), token);
 							if (matchingStorageFile is not null)
@@ -1785,7 +1781,7 @@ namespace Files.App.ViewModels
 					}
 					else
 					{
-						if (!item.IsShortcut && !item.IsHiddenItem && !FtpHelpers.IsFtpPath(item.ItemPath))
+						if (!item.IsShortcut && !item.IsHiddenItem)
 						{
 							BaseStorageFolder? matchingStorageFolder = await GetFolderFromPathAsync(item.GetRequiredPath(), token);
 							if (matchingStorageFolder is not null)
@@ -2070,7 +2066,7 @@ namespace Files.App.ViewModels
 					groupImage = await dispatcherQueue.EnqueueOrInvokeAsync(() => result.ToBitmapAsync(), Microsoft.UI.Dispatching.DispatcherQueuePriority.Low);
 
 				// The groupImage is null if loading icon from fulltrust process failed
-				if (!item.IsShortcut && !item.IsHiddenItem && !FtpHelpers.IsFtpPath(item.ItemPath) && groupImage is null)
+				if (!item.IsShortcut && !item.IsHiddenItem && groupImage is null)
 				{
 					matchingStorageItem ??= await GetFileFromPathAsync(item.GetRequiredPath());
 
@@ -2301,8 +2297,7 @@ namespace Files.App.ViewModels
 			}
 			catch { }
 
-			bool isFtp = FtpHelpers.IsFtpPath(path);
-			bool enumFromStorageFolder = isBoxFolder || isFtp;
+			bool enumFromStorageFolder = isBoxFolder;
 
 			BaseStorageFolder? rootFolder = null;
 
@@ -2389,7 +2384,7 @@ namespace Files.App.ViewModels
 				_ = PromptToUnlockBitlockerIfLockedAsync(path, pathRoot);
 			}
 
-			HasNoWatcher = isFtp || isWslDistro || isMtp || currentStorageFolder?.Item is ZipStorageFolder;
+			HasNoWatcher = isWslDistro || isMtp || currentStorageFolder?.Item is ZipStorageFolder;
 
 			if (enumFromStorageFolder)
 			{

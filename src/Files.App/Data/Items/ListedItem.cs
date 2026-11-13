@@ -3,7 +3,6 @@
 
 using Files.App.ViewModels.Properties;
 using Files.Shared.Helpers;
-using FluentFTP;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics.CodeAnalysis;
@@ -469,7 +468,6 @@ namespace Files.App.Utils
 		public bool IsShortcut => this is IShortcutItem;
 		public bool IsLibrary => this is LibraryItem;
 		public bool IsLinkItem => IsShortcut && ((IShortcutItem)this).IsUrl;
-		public bool IsFtpItem => this is FtpItem;
 		public bool IsArchive => this is ZipItem;
 		public bool IsAlternateStream => this is AlternateStreamItem;
 		public bool IsGitItem => this is IGitItem;
@@ -560,48 +558,6 @@ namespace Files.App.Utils
 		public string? ItemOriginalFolder => Path.IsPathRooted(ItemOriginalPath) ? Path.GetDirectoryName(ItemOriginalPath) : ItemOriginalPath;
 
 		public string? ItemOriginalFolderName => Path.GetFileName(ItemOriginalFolder);
-	}
-
-	public sealed partial class FtpItem : ListedItem
-	{
-		public FtpItem(FtpListItem item, string folder) : base(null)
-		{
-			var isFile = item.Type == FtpObjectType.File;
-			ItemDateCreatedReal = item.RawCreated < DateTime.FromFileTimeUtc(0) ? DateTimeOffset.MinValue : item.RawCreated;
-			ItemDateModifiedReal = item.RawModified < DateTime.FromFileTimeUtc(0) ? DateTimeOffset.MinValue : item.RawModified;
-			ItemNameRaw = item.Name;
-			FileExtension = Path.GetExtension(item.Name);
-			ItemPath = PathNormalization.Combine(folder, item.Name);
-			PrimaryItemAttribute = isFile ? StorageItemTypes.File : StorageItemTypes.Folder;
-			ItemPropertiesInitialized = false;
-
-			var itemType = isFile ? Strings.File.GetLocalizedResource() : Strings.Folder.GetLocalizedResource();
-			if (isFile && item.Name.Contains('.', StringComparison.Ordinal))
-			{
-				itemType = FileExtension.Trim('.') + " " + itemType;
-			}
-
-			ItemType = itemType;
-			FileSizeBytes = item.Size;
-			ContainsFilesOrFolders = !isFile;
-			FileImage = null;
-			FileSize = isFile ? FileSizeBytes.ToSizeString() : string.Empty;
-			Opacity = 1;
-			IsHiddenItem = false;
-		}
-
-		public async Task<IStorageItem> ToStorageItem()
-		{
-			var path = this.GetRequiredPath();
-			var name = ItemNameRaw ?? throw new InvalidOperationException("The FTP item does not have a name.");
-
-			return PrimaryItemAttribute switch
-			{
-				StorageItemTypes.File => await new Utils.Storage.FtpStorageFile(path, name, ItemDateCreatedReal).ToStorageFileAsync(),
-				StorageItemTypes.Folder => new Utils.Storage.FtpStorageFolder(path, name, ItemDateCreatedReal),
-				_ => throw new InvalidDataException("The FTP item has an unsupported storage type."),
-			};
-		}
 	}
 
 	public sealed partial class ShortcutItem : ListedItem, IShortcutItem

@@ -740,8 +740,7 @@ namespace Files.App.Views.Shells
 						e.PreviousDirectory = e.PreviousDirectory.Replace(path, string.Empty, StringComparison.Ordinal);
 
 						var isNetwork = path.StartsWith("\\\\", StringComparison.Ordinal);
-						var isFtp = FtpHelpers.IsFtpPath(path);
-						var separator = isFtp ? "/" : "\\";
+						var separator = "\\";
 
 						// Get previous dir name
 						if (e.PreviousDirectory.StartsWith(separator))
@@ -757,8 +756,6 @@ namespace Files.App.Views.Shells
 
 						if (isNetwork)
 							folderToSelect = separator + folderToSelect;
-						else if (isFtp)
-							folderToSelect = folderToSelect.Replace(":/", "://", StringComparison.Ordinal);
 
 						if (folderToSelect.EndsWith(separator))
 							folderToSelect = folderToSelect.Remove(folderToSelect.Length - 1, 1);

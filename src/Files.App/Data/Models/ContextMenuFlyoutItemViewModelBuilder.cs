@@ -65,7 +65,6 @@ namespace Files.App.Data.Models
 				ShowOnShift = ShowOnShift,
 				ShowInRecycleBin = true,
 				ShowInSearchPage = true,
-				ShowInFtpPage = true,
 				ShowInZipPage = true,
 				AccessKey = string.IsNullOrWhiteSpace(AccessKey) ? command.AccessKey : AccessKey,
 			};

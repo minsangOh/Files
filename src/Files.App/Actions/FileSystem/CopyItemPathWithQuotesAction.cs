@@ -41,9 +41,6 @@ namespace Files.App.Actions
 					? string.Join("\n", contentPage.SelectedItems.Select(item => $"\"{item.ItemPath}\""))
 					: shellPage.GetRequiredShellViewModel().WorkingDirectory;
 
-				if (FtpHelpers.IsFtpPath(path))
-					path = path.Replace('\\', '/');
-
 				SafetyExtensions.IgnoreExceptions(() =>
 				{
 					DataPackage data = new();

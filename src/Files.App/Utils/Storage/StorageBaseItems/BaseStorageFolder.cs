@@ -143,7 +143,7 @@ namespace Files.App.Utils.Storage
 		{
 			return
 				AsyncInfo.Run<BaseStorageFolder?>(async (cancellationToken)
-					=> await ZipStorageFolder.FromPathAsync(path) ?? await FtpStorageFolder.FromPathAsync(path) ?? await ShellStorageFolder.FromPathAsync(path) ?? await SystemStorageFolder.FromPathAsync(path));
+					=> await ZipStorageFolder.FromPathAsync(path) ?? await ShellStorageFolder.FromPathAsync(path) ?? await SystemStorageFolder.FromPathAsync(path));
 		}
 
 		public abstract IAsyncOperation<IReadOnlyList<BaseStorageFolder>?> GetFoldersAsync();

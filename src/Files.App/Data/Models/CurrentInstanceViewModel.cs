@@ -91,18 +91,6 @@ namespace Files.App.Data.Models
 			}
 		}
 
-		private bool isPageTypeFtp = false;
-		public bool IsPageTypeFtp
-		{
-			get => isPageTypeFtp;
-			set
-			{
-				SetProperty(ref isPageTypeFtp, value);
-				OnPropertyChanged(nameof(CanCreateFileInPage));
-				OnPropertyChanged(nameof(CanTagFilesInPage));
-			}
-		}
-
 		private bool isPageTypeCloudDrive = false;
 		public bool IsPageTypeCloudDrive
 		{
@@ -156,12 +144,12 @@ namespace Files.App.Data.Models
 
 		public bool CanCreateFileInPage
 		{
-			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !isPageTypeFtp && !isPageTypeZipFolder && !IsPageTypeSettings;
+			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !isPageTypeZipFolder && !IsPageTypeSettings;
 		}
 
 		public bool CanTagFilesInPage
 		{
-			get => !isPageTypeRecycleBin && !isPageTypeFtp && !isPageTypeZipFolder;
+			get => !isPageTypeRecycleBin && !isPageTypeZipFolder;
 		}
 
 		private bool isGitRepository;

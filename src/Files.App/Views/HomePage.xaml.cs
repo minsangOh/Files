@@ -53,7 +53,6 @@ namespace Files.App.Views
 			AppInstance.InstanceViewModel.IsPageTypeMtpDevice = false;
 			AppInstance.InstanceViewModel.IsPageTypeRecycleBin = false;
 			AppInstance.InstanceViewModel.IsPageTypeCloudDrive = false;
-			AppInstance.InstanceViewModel.IsPageTypeFtp = false;
 			AppInstance.InstanceViewModel.IsPageTypeZipFolder = false;
 			AppInstance.InstanceViewModel.IsPageTypeLibrary = false;
 			AppInstance.InstanceViewModel.GitRepositoryPath = null;

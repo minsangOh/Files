@@ -10,7 +10,6 @@ namespace Files.App.Data.Contexts
 		RecycleBin,
 		Folder,
 		ZipFolder,
-		Ftp,
 		Library,
 		CloudDrive,
 		MtpDevice,

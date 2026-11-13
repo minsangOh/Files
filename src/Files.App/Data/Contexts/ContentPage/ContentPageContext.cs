@@ -156,7 +156,6 @@ namespace Files.App.Data.Contexts
 				case nameof(CurrentInstanceViewModel.IsPageTypeNotHome):
 				case nameof(CurrentInstanceViewModel.IsPageTypeRecycleBin):
 				case nameof(CurrentInstanceViewModel.IsPageTypeZipFolder):
-				case nameof(CurrentInstanceViewModel.IsPageTypeFtp):
 				case nameof(CurrentInstanceViewModel.IsPageTypeLibrary):
 				case nameof(CurrentInstanceViewModel.IsPageTypeCloudDrive):
 				case nameof(CurrentInstanceViewModel.IsPageTypeMtpDevice):
@@ -226,7 +225,6 @@ namespace Files.App.Data.Contexts
 				{ IsPageTypeNotHome: false } => ContentPageTypes.Home,
 				{ IsPageTypeRecycleBin: true } => ContentPageTypes.RecycleBin,
 				{ IsPageTypeZipFolder: true } => ContentPageTypes.ZipFolder,
-				{ IsPageTypeFtp: true } => ContentPageTypes.Ftp,
 				{ IsPageTypeLibrary: true } => ContentPageTypes.Library,
 				{ IsPageTypeCloudDrive: true } => ContentPageTypes.CloudDrive,
 				{ IsPageTypeMtpDevice: true } => ContentPageTypes.MtpDevice,

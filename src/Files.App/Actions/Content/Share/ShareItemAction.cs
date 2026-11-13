@@ -51,7 +51,6 @@ namespace Files.App.Actions
 			return
 				context.PageType != ContentPageTypes.RecycleBin &&
 				context.PageType != ContentPageTypes.Home &&
-				context.PageType != ContentPageTypes.Ftp &&
 				context.PageType != ContentPageTypes.ZipFolder &&
 				context.PageType != ContentPageTypes.None;
 		}
