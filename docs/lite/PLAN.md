@@ -10,7 +10,9 @@ files-community/Files를 포크해 RAM 8GB 사무용 노트북에서 부담 없�
 - 원본 `Files.App` Debug x64 빌드 성공 (재빌드 약 2분).
 - 개발자 모드를 켜고 `FilesDev` 패키지 등록·실행 성공. "실행" 절의 수동 복사 방식으로 정상 기동한다.
 - 포크 전용 워크플로 `.github/workflows/lite-package.yml`이 Release x64 서명 패키지를 만든다 ("Release 패키지 설치" 참고).
-- 원본 Debug와 Release 패키지의 기준 측정 완료 ("측정 기록" 참고). 메모리 목표 확정("결정 사항"). 1단계 완료(홈 위젯 기본 끔). 다음 작업은 2단계다.
+- 0~4단계 구현 완료 (2026-11-13, `lite-main`). 결과와 판단은 각 단계 절과 "측정 기록"을 본다.
+- 목표 대비 (자동 측정, Private 합계): S1 132MB (목표 130), S4 245MB (목표 190, 미달), S5 188MB (목표 150, 부득이 200 이내), S6 0.
+- 앱 실행 확인은 자동 시험(탭, 듀얼 패인 복원, 탭 재우기 후 깨우기, 미리보기 패널 표시)만 했다. 사람이 직접 조작한 확인은 아직 없다.
 
 ## 대상 PC와 사용 환경
 
@@ -104,7 +106,7 @@ Debug(JIT) 빌드와 Release(Native AOT) 빌드는 점유가 크게 다르다. �
 3. 포크에서 GitHub Actions를 켜고 `ci.yml`로 Release x64 패키지를 받아 설치.
 4. 원본 그대로 S1~S6 측정, 기록.
 5. 측정값을 보고 사용자와 메모리 목표를 정해 이 문서에 적는다.
-6. 패키지 이름·게시자·표시 이름을 바꿔 공식 Files와 나란히 설치되게 한다 (`src/Files.App/Package.appxmanifest`, `.github/scripts/Configure-AppxManifest.ps1`). 라이선스 파일(`LICENSE-MIT`, `LICENSE-MPL`)은 그대로 둔다.
+6. 패키지 이름·게시자·표시 이름을 바꿔 공식 Files와 나란히 설치되게 한다. **완료**: 신원 `FilesLite`, 표시 이름 "Files Lite". 공식판(FilesStable, FilesPreview, 스토어)과 원래 이름부터 겹치지 않았고, 이제 upstream Dev 빌드(`FilesDev`)와도 겹치지 않는다. 실행 별칭 `files-dev.exe`와 프로토콜 `files-dev:`는 코드 여러 곳이 쓰므로 그대로 뒀다(upstream Dev 빌드와 함께 설치하면 별칭이 겹친다). 게시자는 서명 인증서와 맞춰야 해서 `CN=Files` 그대로다. 라이선스 파일은 그대로 둔다.
 
 ### 1단계: 기본값만 바꾸기 (코드 삭제 없음)
 
@@ -124,32 +126,40 @@ Debug(JIT) 빌드와 Release(Native AOT) 빌드는 점유가 크게 다르다. �
 
 ### 2단계: 살아 있는 메모리 줄이기 (핵심)
 
-- **비활성 탭 재우기**: 탭이 선택 해제되면 일정 시간 뒤 항목 목록·비트맵·폴더 감시자를 내려놓고 경로와 스크롤 위치만 남긴다. 다시 선택하면 재탐색한다. 탭과 듀얼 패인의 겉보기 동작은 유지한다.
-- 레이아웃 페이지 캐시 축소 (`ItemDisplayFrame` CacheSize, `NavigationCacheMode`).
-- 아이콘·썸네일 캐시에 상한(LRU)을 둔다.
-- 썸네일을 항상 표시 크기로 디코딩한다. `FileImage`가 채워지면 `PreloadedIconData`를 비운다.
-- 미리보기 패널: 선택이 바뀌거나 패널을 닫을 때 이전 미리보기 리소스가 해제되는지 확인하고 고친다.
+완료 (2026-11-13). 판단은 자동 측정(아래 "측정 기록"의 자동 측정 절차)으로 했다.
+
+- **비활성 탭 재우기 (적용)**: `TabBarItem`이 선택 해제 30초 뒤 탭 페이지를 Dispose하고 `NavigationParameter`만 남긴다. 다시 선택하면 그 값으로 다시 연다(`AppModel.TabStripSelectedIndex`에서 깨우고 나머지를 예약). 해제 직후 기존 `AppMemoryHelper.RequestTrim()`을 부른다. 자동 시험에서 잠든 듀얼 패인 탭이 두 창 그대로 돌아오는 것을 확인했다. 스크롤 위치와 선택 항목은 돌아오지 않는다.
+  - 효과는 미미했다. S4에서 탭이 잠든 뒤 WS는 크게 줄지만(작업 집합 비우기) Private는 215 → 212MB 정도다. 해제한 페이지가 다른 곳에 참조로 남는지, WinUI 네이티브 힙이 반환하지 않는지는 조사하지 못했다. 다음에 메모리를 더 줄이려면 여기부터 본다.
+- 레이아웃 페이지 캐시 축소 (미적용): Grid/Details 페이지 캐시는 형식마다 인스턴스 하나라 이득이 작다고 보고 손대지 않았다.
+- 아이콘·썸네일 캐시 상한 (미적용): `IconCacheService`는 확장자·크기·DPI 키, `ShellImage`·`DllIconCache`는 리소스 파일·인덱스·크기 키라 항목 수에 비례해 늘지 않는다.
+- `PreloadedIconData` 비우기 (미적용): 값이 `IconCacheService`의 공유 배열 참조라 항목마다 복사본이 없다.
+- 미리보기 리소스 해제 (미적용): `ShellPreview`가 Unloaded에서 `UnloadPreview()`를 부르고, 패널을 끌 때도 해제한다. 이미 처리돼 있다.
 
 ### 3단계: 기능 제거
 
-측정으로 효과가 확인된 것부터 한다. 한 기능이 한 브랜치다.
+완료 (2026-11-13). 실행 중인 Files 프로세스의 모듈을 보면 S1~S5에서 Git(libgit2), Sentry, WebView2, 7z, FTP, Win2D 모두 메모리에 올라오지 않는다. 그래서 제거의 메모리 효과는 측정 시나리오에서 거의 없다. "결정 사항"의 제거 후보라 사용자 지시(2026-11-13, 측정에 매몰되지 말고 나머지를 구현)에 따라 제거했다.
 
-| 대상 | 범위 | 주의 |
-|---|---|---|
-| Git 통합 | `LibGit2Service`, `GitHelpers`, `Actions/Git`, Git 열·상태 표시줄, `GitItem` | 참조 범위가 넓다. 열거기와 `ListedItem`까지 닿는다. |
-| Sentry | 패키지, `SentryLoggerProvider`, `ActiveSessionTracker`, 호출부 | |
-| 자연어 검색 | `NaturalLanguageSearch.cs`와 호출부 | |
-| 릴리스 노트 WebView2, 죽은 HTML/PDF 미리보기 | `ReleaseNotesPage`, `HtmlPreview`, `PDFPreview`, `WebViewEnvironment` | |
-| FTP | `Ftp*` 저장소 항목, `FluentFTP` | |
-| 압축 | `StorageArchiveService`, `Zip*`, `Actions/Content/Archives`, 7z DLL | zip을 폴더처럼 여는 기능과 압축 파일 미리보기도 함께 사라진다. 제거 전에 사용자에게 확인한다. |
-| 홈 위젯, 상태 센터 속도 그래프(Win2D) | 위젯 뷰모델, `SpeedGraph` | |
-| 코드·마크다운 미리보기 | ColorCode, MarkdownTextBlock | 미리보기 패널은 유지 대상이다. 제거 전에 사용자에게 확인한다. |
+| 대상 | 결과 |
+|---|---|
+| Sentry | 제거 (`f93e6a36`). 패키지가 AOT 링크에 `gdi32.lib`를 넣어 주고 있어서 `NativeLibrary`로 직접 추가했다 (`4a048ee6`) |
+| 자연어 검색 | 제거 (`f93e6a36`). 매니페스트 `systemAIModels` 권한도 뺐다 |
+| 릴리스 노트 WebView2, 죽은 HTML/PDF 미리보기 | 제거 (`f93e6a36`) |
+| FTP | 제거 (`518514fa`). `ftp://` 경로는 이제 잘못된 경로처럼 실패한다 |
+| Git 통합 | 제거 (`e6c34ae0`). 열, 상태 표시줄 브랜치 UI, 대화상자, LibGit2Sharp 포함. 개발 도구 설정의 "Open in IDE: Git repos" 선택지는 저장값 호환 때문에 남았고 이제 버튼이 보이지 않는다 |
+| 압축 | 유지. 제거 전 사용자 확인 대상이다 |
+| 코드·마크다운 미리보기 | 유지. 제거 전 사용자 확인 대상이다 |
+| 홈 위젯 | 유지. 1단계에서 기본 끔이고 설정에서 다시 켤 수 있다 |
+| 상태 센터 속도 그래프(Win2D) | 유지. Win2D는 글꼴 썸네일(`FontFileHelper`)에도 쓰여 그래프만 지워서는 패키지를 뺄 수 없다 |
+
+`.resw` 문자열은 upstream 충돌을 줄이려고 지우지 않았다.
 
 ### 4단계: 런타임 조정
 
-- `CommandManager`의 명령 객체를 필요할 때 만들도록 바꾼다.
-- 서버 시작 시 미리 데우는 작업(컨텍스트 메뉴, 최근 항목, 점프 목록, 업데이트 확인 타이머)을 줄인다.
-- GC: Satori GC와 표준 워크스테이션 GC + `GCConserveMemory`를 같은 시나리오로 비교해 낮은 쪽을 고른다.
+완료 (2026-11-13).
+
+- **GC (적용)**: Satori를 빼고 표준 워크스테이션 GC, `ConcurrentGarbageCollection=false`, `System.GC.ConserveMemory=5`를 두 프로젝트(앱, 서버)에 적용했다. 시나리오마다 20~45MB 줄고 반복 측정 편차도 거의 없어졌다. 서버 Private는 약 47 → 34MB.
+- **서버 미리 데우기 (적용)**: 서버 시작 시 컨텍스트 메뉴 warm-up과 업데이트 확인 타이머를 시작하지 않는다. Dev 환경에서는 클라이언트의 릴리스 노트 HTTP 확인도 하지 않는다. 첫 우클릭 메뉴가 조금 느려질 수 있다. 서버 Private는 최종 측정에서 약 28MB다. 이 항목만 따로 잰 값은 없다.
+- `CommandManager` 지연 생성 (미적용): 명령 객체가 작고 리팩터링 범위가 커서 하지 않았다.
 
 ## 빌드 도구 설치
 
@@ -206,13 +216,17 @@ Release(Native AOT) 패키징은 컴파일러가 메모리를 많이 쓴다. RAM
 
 ### Release 패키지 설치
 
-upstream `ci.yml`은 포크에서 돌지 않는다. 모든 잡에 `github.repository_owner == 'files-community'` 조건이 있고 push 트리거가 `main`뿐이다. 그래서 `ci.yml`은 그대로 두고 패키징 단계만 옮긴 `.github/workflows/lite-package.yml`을 쓴다. `lite-main`과 `lite/**` 푸시마다 돌고(약 7분), 결과물 "Files Lite Package (Release, x64)"에 `.msixbundle`과 공개 인증서 `.cer`가 들어 있다.
+upstream `ci.yml`은 포크에서 돌지 않는다. 모든 잡에 `github.repository_owner == 'files-community'` 조건이 있고 push 트리거가 `main`뿐이다. 그래서 `ci.yml`은 그대로 두고 패키징 단계만 옮긴 `.github/workflows/lite-package.yml`을 쓴다. `lite-main`과 `lite/**` 푸시마다 돌고(약 10분), 결과물 "Files Lite Package (Release, x64)"에 `.msixbundle`과 공개 인증서 `.cer`가 들어 있다. 새 커밋이 없는 브랜치 푸시와 빈 커밋은 `paths-ignore` 때문에 빌드를 시작하지 않는다.
+
+서명은 고정 인증서(CN=Files, 지문 `DBC4C0B8BA5CC2DE8F8150F973D9D7A14CBF75BE`, 2036-11-13 만료)로 한다. 저장소 시크릿 `LITE_SIGNING_PFX_BASE64`, `LITE_SIGNING_PFX_PASSWORD`에 들어 있고, 워크플로가 비밀번호 없는 임시 PFX로 다시 내보내 서명한다(패키징 작업이 비밀번호 있는 키를 못 읽는다, APPX0105). 원본 PFX와 비밀번호는 이 PC의 `D:\lite-pkg\signing`에만 있다.
 
 1. 받기: `gh run download <run-id> --repo minsangOh/Files -D D:\lite-pkg\run-<run-id>`
-2. 인증서 신뢰 (사용자가 관리자 PowerShell에서 직접 한다. 실행마다 새 인증서가 만들어지므로 매번 필요하다):
+2. 인증서 신뢰 (사용자가 관리자 PowerShell에서 직접, 고정 인증서라 한 번만 하면 된다):
    `Import-Certificate -FilePath <...>\Files.App_<버전>_x64.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople`
-3. 같은 신원(`FilesDev`, `CN=Files`)의 Debug 등록이 있으면 지운다: `Get-AppxPackage FilesDev | Remove-AppxPackage`. 앱 설정과 탭 기록도 지워진다.
+3. 같은 신원(`FilesLite`, 이전 이름 `FilesDev`)의 등록이 있으면 지운다: `Get-AppxPackage FilesLite | Remove-AppxPackage`. 앱 설정과 탭 기록도 지워진다.
 4. 설치: `Add-AppxPackage -Path <...>\Files.App_<버전>_x64.msixbundle`. Windows App Runtime 2.6.5가 필요하다(이 PC에는 있다).
+
+인증서 없이 시험하려면(개발자 모드 필요): 번들 안의 `*_x64.msix`와 scale 리소스 msix를 한 폴더에 풀고 `AppxSignature.p7x`, `AppxBlockMap.xml`, `[Content_Types].xml`, `AppxMetadata`를 뺀 뒤 `Add-AppxPackage -Register <폴더>\AppxManifest.xml`로 등록한다. 2026-11-13 자동 측정은 모두 이 방식으로 설치해 쟀다.
 
 이 패키지는 CD의 환경 치환을 거치지 않아 `AppEnvironment`가 Dev다. 따라서 공식 사이드로드판과 달리 `CloseToBackground` 기본값이 false이고, Sentry·업데이트 확인·릴리스 노트 자동 열기가 돌지 않는다(릴리스 노트 존재 여부 HTTP 확인만 한다).
 
@@ -240,5 +254,14 @@ upstream `ci.yml`은 포크에서 돌지 않는다. 모든 잡에 `github.reposi
 | 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S4 탭 5개 | 269 / 228 | 83 / 47 | 원본과 같은 순서. 합계 275 (원본 281) |
 | 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S5 듀얼 패인 + 미리보기 | 243 / 210 | 92 / 46 | 탭 1개, 공용폴더 / 개발팀, 이미지·PDF 선택(사용자 조작). 합계 256 (원본 265) |
 | 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S6 창 닫은 뒤 | 0 | 0 | 60초 뒤 두 프로세스 모두 종료 |
+| 2026-11-13 | 1단계 `f9d3d096` | Release x64 (CI) | 자동 S1~S5 | 아래 비고 | 아래 비고 | 자동 측정 2회 평균 합계: S1 163, S2 253, S3 245, S4 301, S5 219. 같은 시나리오인데 회차 간 Files Private가 40~50MB씩 흔들렸다(Satori) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S1 유휴 | 165 / 105 | 66 / 28 | 자동 2회 평균. 합계 132 (자동 1단계 163) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S2 로컬 대량 | 262 / 173 | 74 / 29 | 합계 202 (자동 1단계 253) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S3 NAS | 259 / 167 | 74 / 28 | 경로로 바로 연 NAS 폴더(944개). 합계 195 (자동 1단계 245) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S4 탭 5개 | 50 / 217 | 67 / 28 | 마지막 탭 뒤 60초 기다림. 탭 재우기로 WS가 비워진다. 합계 245 (자동 1단계 301) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S5 듀얼 패인 + 미리보기 | 258 / 159 | 75 / 29 | 자동(세션 주입). 합계 188 (자동 1단계 219) |
+| 2026-11-13 | 최종 `e6c34ae0` | Release x64 (CI) | S6 창 닫은 뒤 | 0 | 0 | 2회 모두 60초 뒤 프로세스 없음 |
 
 Debug에서 아직 재지 않은 것: S3 단독, S5. Release는 S1~S6 모두 쟀다. 1단계 행은 시나리오마다 1회 측정이라 10MB 안쪽 차이는 오차일 수 있다.
+
+**자동 측정 절차** (2026-11-13부터): 사람 조작 없이 S1~S6를 잰다. 매 시나리오 전에 앱을 닫고 `user_settings.json`에서 세션 탭과 시나리오 설정을 지운다. S2·S3는 경로 인수로 바로 연다(홈을 거치지 않는다). S4는 마지막 탭을 연 뒤 60초 기다린다(탭 재우기 30초 이후). S5는 세션에 듀얼 패인 탭(왼쪽 `W:\공용폴더`의 이미지, 오른쪽 `W:\`의 PDF 선택)과 `IsInfoPaneEnabled`를 넣고 띄운다. 사람이 조작한 S3·S5와 조건이 달라 값을 직접 비교하지 않는다. 스크립트는 세션 scratchpad에 있었고 저장소에는 넣지 않았다.
