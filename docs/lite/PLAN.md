@@ -5,11 +5,12 @@ files-community/Files를 포크해 RAM 8GB 사무용 노트북에서 부담 없�
 ## 현재 상태 (2026-11-13)
 
 - 포크 `minsangOh/Files` 생성, `D:\github\Files`에 클론, `upstream` 원격 추가 완료.
-- 작업 브랜치 `lite/bootstrap`. 이 문서와 `.claude/CLAUDE.md`, `tools/lite/Measure-Memory.ps1`만 추가했고 아직 커밋하지 않았다.
+- 제품 브랜치 `lite-main` 생성·푸시 완료 (`lite/bootstrap`에서 분기).
 - 빌드 도구 설치 완료: .NET SDK 10.0.404, Build Tools 2026 18.11 (`D:\BuildTools2026`). 설치 관리자가 재부팅을 권고했고 아직 재부팅하지 않았다.
 - 원본 `Files.App` Debug x64 빌드 성공 (재빌드 약 2분).
 - 개발자 모드를 켜고 `FilesDev` 패키지 등록·실행 성공. "실행" 절의 수동 복사 방식으로 정상 기동한다.
-- 원본 Debug 빌드의 기준 측정 일부 완료 ("측정 기록" 참고). 다음 작업은 Release 패키지 측정(포크의 GitHub Actions)과 메모리 목표 확정이다.
+- 포크 전용 워크플로 `.github/workflows/lite-package.yml`이 Release x64 서명 패키지를 만든다 ("Release 패키지 설치" 참고).
+- 원본 Debug와 Release 패키지의 기준 측정 완료 ("측정 기록" 참고). 메모리 목표 확정("결정 사항"). 다음 작업은 1단계다.
 
 ## 대상 PC와 사용 환경
 
@@ -27,7 +28,16 @@ files-community/Files를 포크해 RAM 8GB 사무용 노트북에서 부담 없�
 
 - **유지**: 탭, 듀얼 패인, 미리보기(정보) 패널.
 - **제거 후보**: 그 밖의 전부. Git 통합, FTP, 홈 위젯, 원격 진단(Sentry), 자연어 검색, 압축 등.
-- **메모리 목표**: 원본을 먼저 측정한 뒤 그 수치를 보고 정한다.
+- **메모리 목표** (2026-11-13 사용자와 확정. Release 패키지, Files + Server Private 합계, 4단계까지 마친 최종 목표):
+
+  | 시나리오 | 원본 | 목표 |
+  |---|---|---|
+  | S1 유휴 | 175MB | 130MB 이하 (약 -25%) |
+  | S4 탭 5개 | 281MB | 190MB 이하 (약 -33%) |
+  | S5 듀얼 패인 + 미리보기 | 265MB | 150MB 이하 (약 -43%). 부득이하면 200MB 이하 (약 -25%) |
+  | S6 창 닫은 뒤 | 0 | 0 유지 |
+
+  WS는 메모리 압박에 따라 크게 흔들려 판정에서 뺀다. 원본 값은 세션 복원 탭이 섞이지 않은 재측정값이다.
 - **빌드**: 로컬에는 명령줄 Build Tools만 두고 VS Code로 편집한다. Visual Studio IDE는 설치하지 않는다.
 
 ## 원본 구조에서 확인한 사실
@@ -67,7 +77,7 @@ files-community/Files를 포크해 RAM 8GB 사무용 노트북에서 부담 없�
 
 모든 단계에서 같은 절차로 잰다. 수치는 아래 "측정 기록"에 남긴다.
 
-1. 다른 Files 인스턴스를 모두 끄고 앱을 실행한다.
+1. 다른 Files 인스턴스를 모두 끄고 두 프로세스가 끝난 것을 확인한다. 앱은 기본값으로 지난 세션의 탭을 복원하므로(`ContinueLastSessionOnStartUp`), `LocalState\settings\user_settings.json`에서 `LastSessionTabList`와 이전 시나리오에서 바꾼 설정(예: `AlwaysOpenDualPaneInNewTab`, `IsInfoPaneEnabled`)을 지운 뒤 앱을 실행한다.
 2. 시나리오별로 30초 기다린 뒤 측정한다.
 
 ```powershell
@@ -185,7 +195,19 @@ Add-AppxPackage -Register (Resolve-Path "$out\AppxManifest.xml")
 
 등록되면 시작 메뉴의 "Files - Dev"나 `files-dev.exe <경로>`로 실행한다. 패키지 이름은 `FilesDev`다. 이미 떠 있으면 `files-dev.exe <경로>`는 새 탭을 열고 바로 돌아오지만, 첫 실행일 때는 앱이 끝날 때까지 돌아오지 않는다. 스크립트에서는 `Start-Process`로 띄운다.
 
-Release(Native AOT) 패키징은 컴파일러가 메모리를 많이 쓴다. RAM 7.6GB인 이 PC 대신 포크의 GitHub Actions(`ci.yml`, Release x64 구성이 자체 서명 MSIX를 만든다)에서 돌린다. 이 판단은 추정이고 로컬 AOT 빌드는 시험하지 않았다.
+Release(Native AOT) 패키징은 컴파일러가 메모리를 많이 쓴다. RAM 7.6GB인 이 PC 대신 포크의 GitHub Actions에서 돌린다. 이 판단은 추정이고 로컬 AOT 빌드는 시험하지 않았다.
+
+### Release 패키지 설치
+
+upstream `ci.yml`은 포크에서 돌지 않는다. 모든 잡에 `github.repository_owner == 'files-community'` 조건이 있고 push 트리거가 `main`뿐이다. 그래서 `ci.yml`은 그대로 두고 패키징 단계만 옮긴 `.github/workflows/lite-package.yml`을 쓴다. `lite-main`과 `lite/**` 푸시마다 돌고(약 7분), 결과물 "Files Lite Package (Release, x64)"에 `.msixbundle`과 공개 인증서 `.cer`가 들어 있다.
+
+1. 받기: `gh run download <run-id> --repo minsangOh/Files -D D:\lite-pkg\run-<run-id>`
+2. 인증서 신뢰 (사용자가 관리자 PowerShell에서 직접 한다. 실행마다 새 인증서가 만들어지므로 매번 필요하다):
+   `Import-Certificate -FilePath <...>\Files.App_<버전>_x64.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople`
+3. 같은 신원(`FilesDev`, `CN=Files`)의 Debug 등록이 있으면 지운다: `Get-AppxPackage FilesDev | Remove-AppxPackage`. 앱 설정과 탭 기록도 지워진다.
+4. 설치: `Add-AppxPackage -Path <...>\Files.App_<버전>_x64.msixbundle`. Windows App Runtime 2.6.5가 필요하다(이 PC에는 있다).
+
+이 패키지는 CD의 환경 치환을 거치지 않아 `AppEnvironment`가 Dev다. 따라서 공식 사이드로드판과 달리 `CloseToBackground` 기본값이 false이고, Sentry·업데이트 확인·릴리스 노트 자동 열기가 돌지 않는다(릴리스 노트 존재 여부 HTTP 확인만 한다).
 
 ## 측정 기록
 
@@ -197,5 +219,13 @@ Release(Native AOT) 패키징은 컴파일러가 메모리를 많이 쓴다. RAM
 | 2026-11-13 | f6f35e79 (원본) | Debug x64 | S2 로컬 대량 | 283 / 202 | 97 / 46 | 새로 띄워 `C:\Windows\System32`(4,759개) 열기. 이전 세션 탭이 복원됐는지는 확인하지 못했다 |
 | 2026-11-13 | f6f35e79 (원본) | Debug x64 | S4 탭 5개 | 341 / 253 | 82 / 35 | 홈, System32, NAS 폴더(25개), `D:\github`, 문서 |
 | 2026-11-13 | f6f35e79 (원본) | Debug x64 | S6 창 닫은 뒤 | 0 | 0 | 60초 뒤 두 프로세스 모두 종료. Dev 빌드는 `CloseToBackground` 기본값이 false다 |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S1 유휴 | 175 / 128 | 83 / 47 | 설치 직후 첫 실행, 홈, 탭 1개. 가용 RAM 0.35GB |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S2 로컬 대량 | 282 / 182 | 98 / 46 | 새로 띄워 `C:\Windows\System32`(4,759개) 열기 |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S3 NAS | 214 / 251 | 89 / 45 | 새로 띄워 NAS의 "ERP 업로드 완료" 폴더 열기, 자세히 보기. 경로와 항목 수는 확인하지 못했다. 시작 메뉴로 띄워 S4의 탭 5개가 복원된 상태였을 수 있다. **무효, 재측정 필요** |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S4 탭 5개 | 280 / 236 | 88 / 45 | S2에 이어 `W:\`, `D:\github`, 문서, 홈 탭 추가. 탭 5개는 사용자가 화면으로 확인 |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S5 듀얼 패인 + 미리보기 | 241 / 289 | 94 / 53 | 새로 띄워 듀얼 패인, 미리보기 켜고 왼쪽 이미지·오른쪽 PDF 선택(사용자 조작). 새 미리보기 호스트 프로세스는 보이지 않았다. 세션 복원으로 탭 3개(홈, System32, 듀얼 패인)였다. **무효, 재측정 필요** |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S6 창 닫은 뒤 | 0 | 0 | 60초 뒤 두 프로세스 모두 종료 (Dev 환경이라 `CloseToBackground` false) |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S3 NAS (재측정) | 316 / 214 | 98 / 48 | 세션 초기화 후 탭 1개, NAS 업무 폴더(944개) 자세히 보기. 측정 뒤 설정에 정보 패널이 켜져 있었다 |
+| 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S5 듀얼 패인 + 미리보기 (재측정) | 260 / 218 | 99 / 47 | 세션 초기화 후 탭 1개, 듀얼 패인(NAS 공용폴더 / 개발팀), 미리보기 켜고 이미지·PDF 선택(사용자 조작) |
 
-아직 재지 않은 것: S3 단독(NAS 대량 폴더. 이번 대상은 25개뿐이었다), S5(듀얼 패인 + 미리보기), Release(Native AOT) 빌드 전체.
+Debug에서 아직 재지 않은 것: S3 단독, S5. Release는 S1~S6 모두 쟀다.
