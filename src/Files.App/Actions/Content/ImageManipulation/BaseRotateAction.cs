@@ -28,7 +28,6 @@ namespace Files.App.Actions
 			context.ShellPage.SlimContentPage is not null &&
 			context.PageType != ContentPageTypes.RecycleBin &&
 			context.PageType != ContentPageTypes.ZipFolder &&
-			context.PageType != ContentPageTypes.ReleaseNotes &&
 			context.PageType != ContentPageTypes.Settings &&
 			context.HasSelection &&
 			context.SelectedItems.All(x => FileExtensionHelpers.IsCompatibleToSetAsWindowsWallpaper(x.FileExtension));

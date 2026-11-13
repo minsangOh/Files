@@ -120,7 +120,6 @@ namespace Files.App.ViewModels
 		public bool ShowToolbar =>
 			AppearanceSettingsService.ShowToolbar &&
 			context.PageType is not ContentPageTypes.Home &&
-			context.PageType is not ContentPageTypes.ReleaseNotes &&
 			context.PageType is not ContentPageTypes.Settings;
 
 		private bool canShowPrompts;

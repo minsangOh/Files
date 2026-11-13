@@ -15,7 +15,6 @@ namespace Files.App.Data.Contexts
 		CloudDrive,
 		MtpDevice,
 		SearchResults,
-		ReleaseNotes,
 		Settings,
 	}
 }

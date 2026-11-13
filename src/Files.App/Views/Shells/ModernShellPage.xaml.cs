@@ -118,10 +118,6 @@ namespace Files.App.Views.Shells
 			{
 				NavigateHome();
 			}
-			else if (navParams.NavPath == "ReleaseNotes")
-			{
-				NavigateToReleaseNotes();
-			}
 			else if (navParams.NavPath == "Settings")
 			{
 				NavigateToSettings(navParams.SelectItem);
@@ -285,18 +281,6 @@ namespace Files.App.Views.Shells
 				new NavigationArguments()
 				{
 					NavPathParam = "Home",
-					AssociatedTabInstance = this
-				},
-				new SuppressNavigationTransitionInfo());
-		}
-
-		public override void NavigateToReleaseNotes()
-		{
-			ItemDisplayFrame.Navigate(
-				typeof(ReleaseNotesPage),
-				new NavigationArguments()
-				{
-					NavPathParam = "ReleaseNotes",
 					AssociatedTabInstance = this
 				},
 				new SuppressNavigationTransitionInfo());

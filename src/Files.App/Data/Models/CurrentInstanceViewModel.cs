@@ -54,18 +54,6 @@ namespace Files.App.Data.Models
 			}
 		}
 
-		private bool isPageTypeReleaseNotes = false;
-		public bool IsPageTypeReleaseNotes
-		{
-			get => isPageTypeReleaseNotes;
-			set
-			{
-				SetProperty(ref isPageTypeReleaseNotes, value);
-				OnPropertyChanged(nameof(CanCreateFileInPage));
-				OnPropertyChanged(nameof(CanCopyPathInPage));
-			}
-		}
-
 		private bool isPageTypeSettings = false;
 		public bool IsPageTypeSettings
 		{
@@ -163,12 +151,12 @@ namespace Files.App.Data.Models
 
 		public bool CanCopyPathInPage
 		{
-			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !IsPageTypeReleaseNotes && !IsPageTypeSettings;
+			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !IsPageTypeSettings;
 		}
 
 		public bool CanCreateFileInPage
 		{
-			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !isPageTypeFtp && !isPageTypeZipFolder && !IsPageTypeReleaseNotes && !IsPageTypeSettings;
+			get => !isPageTypeMtpDevice && !isPageTypeRecycleBin && isPageTypeNotHome && !isPageTypeSearchResults && !isPageTypeFtp && !isPageTypeZipFolder && !IsPageTypeSettings;
 		}
 
 		public bool CanTagFilesInPage

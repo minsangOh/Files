@@ -161,7 +161,6 @@ namespace Files.App.Data.Contexts
 				case nameof(CurrentInstanceViewModel.IsPageTypeCloudDrive):
 				case nameof(CurrentInstanceViewModel.IsPageTypeMtpDevice):
 				case nameof(CurrentInstanceViewModel.IsPageTypeSearchResults):
-				case nameof(CurrentInstanceViewModel.IsPageTypeReleaseNotes):
 				case nameof(CurrentInstanceViewModel.IsPageTypeSettings):
 					UpdatePageType();
 					break;
@@ -225,7 +224,6 @@ namespace Files.App.Data.Contexts
 			{
 				null => ContentPageTypes.None,
 				{ IsPageTypeNotHome: false } => ContentPageTypes.Home,
-				{ IsPageTypeReleaseNotes: true } => ContentPageTypes.ReleaseNotes,
 				{ IsPageTypeRecycleBin: true } => ContentPageTypes.RecycleBin,
 				{ IsPageTypeZipFolder: true } => ContentPageTypes.ZipFolder,
 				{ IsPageTypeFtp: true } => ContentPageTypes.Ftp,
@@ -264,7 +262,6 @@ namespace Files.App.Data.Contexts
 				and not ContentPageTypes.ZipFolder
 				and not ContentPageTypes.SearchResults
 				and not ContentPageTypes.MtpDevice
-				and not ContentPageTypes.ReleaseNotes
 				and not ContentPageTypes.Settings;
 		}
 	}

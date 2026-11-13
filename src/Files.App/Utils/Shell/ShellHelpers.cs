@@ -48,7 +48,6 @@ namespace Files.App.Utils.Shell
 			return shPath switch
 			{
 				"Home" => Strings.Home.GetLocalizedResource(),
-				"ReleaseNotes" => Strings.ReleaseNotes.GetLocalizedResource(),
 				"Settings" => Strings.Settings.GetLocalizedResource(),
 				Constants.UserEnvironmentPaths.RecycleBinPath => Strings.RecycleBin.GetLocalizedResource(),
 				Constants.UserEnvironmentPaths.NetworkFolderPath => Strings.Network.GetLocalizedResource(),

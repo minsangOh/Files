@@ -1,8 +1,6 @@
 // Copyright (c) Files Community
 // Licensed under the MIT License.
 
-using Windows.ApplicationModel;
-
 namespace Files.App
 {
 	public static class Constants
@@ -14,10 +12,6 @@ namespace Files.App
 			public const string GitHubClientId = "githubclientid.secret";
 
 			public const string BingMapsSecret = "bingmapskey.secret";
-
-			public const string SentrySecret = "sentry.secret";
-
-			public const string LanguageModelLafToken = "languagemodellaftoken.secret";
 		}
 
 		public static class KnownImageFormats
@@ -182,7 +176,6 @@ namespace Files.App
 			public const string PrivacyPolicyUrl = @"https://files.community/privacy";
 			public const string SupportUsUrl = @"https://files.community/sponsor";
 			public const string CrowdinUrl = @"https://crowdin.com/project/files-app";
-			public static readonly string ReleaseNotesUrl = $"https://files.community/blog/posts/v{Package.Current.Id.Version.Major}-{Package.Current.Id.Version.Minor}-{Package.Current.Id.Version.Build}?minimal";
 		}
 
 		public static class DocsPath

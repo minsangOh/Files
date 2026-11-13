@@ -11,13 +11,6 @@ namespace Files.App.Services
 
 		public bool IsAppUpdated => AppLifecycleHelper.IsAppUpdated;
 
-		private bool _areReleaseNotesAvailable = false;
-		public bool AreReleaseNotesAvailable
-		{
-			get => _areReleaseNotesAvailable;
-			private set => SetProperty(ref _areReleaseNotesAvailable, value);
-		}
-
 		public new event PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
 
 		public Task CheckAndUpdateFilesLauncherAsync()
@@ -28,11 +21,6 @@ namespace Files.App.Services
 		public Task CheckForUpdatesAsync()
 		{
 			return Task.CompletedTask;
-		}
-
-		public async Task CheckForReleaseNotesAsync()
-		{
-			AreReleaseNotesAvailable = await SafetyExtensions.IgnoreExceptions(async () => await Server.UpdateService.CheckReleaseNotesAsync(), App.Logger);
 		}
 
 		public Task DownloadMandatoryUpdatesAsync()

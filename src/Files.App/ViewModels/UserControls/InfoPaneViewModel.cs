@@ -341,22 +341,6 @@ namespace Files.App.ViewModels.UserControls
 				return new TextPreview(model);
 			}
 
-			/*if (FileExtensionHelpers.IsPdfFile(ext))
-			{
-				var model = new PDFPreviewViewModel(item);
-				await model.LoadAsync();
-
-				return new PDFPreview(model);
-			}*/
-
-			/*if (FileExtensionHelpers.IsHtmlFile(ext))
-			{
-				var model = new HtmlPreviewViewModel(item);
-				await model.LoadAsync();
-
-				return new HtmlPreview(model);
-			}*/
-
 			if (FileExtensionHelpers.IsRichTextFile(ext))
 			{
 				var model = new RichTextPreviewViewModel(item);
@@ -404,7 +388,7 @@ namespace Files.App.ViewModels.UserControls
 
 		private async Task UpdateSelectedItemPreviewCoreAsync(bool downloadItem)
 		{
-			if (contentPageContext.PageType is ContentPageTypes.ReleaseNotes || contentPageContext.PageType is ContentPageTypes.Settings)
+			if (contentPageContext.PageType is ContentPageTypes.Settings)
 			{
 				PreviewPaneState = PreviewPaneStates.NoPreviewOrDetailsAvailable;
 				PreviewPaneContent = null;

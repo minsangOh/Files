@@ -48,7 +48,6 @@ namespace Files.App.Actions
 				context.PageType != ContentPageTypes.Home &&
 				context.PageType != ContentPageTypes.RecycleBin &&
 				context.PageType != ContentPageTypes.SearchResults &&
-				context.PageType != ContentPageTypes.ReleaseNotes &&
 				context.PageType != ContentPageTypes.Settings;
 		}
 

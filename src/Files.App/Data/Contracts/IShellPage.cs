@@ -67,11 +67,6 @@ namespace Files.App.Data.Contracts
 		public void NavigateHome();
 
 		/// <summary>
-		/// Navigates to the release notes page
-		/// </summary>
-		public void NavigateToReleaseNotes();
-
-		/// <summary>
 		/// Navigates to the settings page
 		/// </summary>
 		public void NavigateToSettings(string? selectItem = null);

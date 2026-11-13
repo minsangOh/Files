@@ -57,10 +57,9 @@ namespace Files.App
 			InitializeComponent();
 
 			// Configure exception handlers
-			AppLifecycleHelper.RecordFirstChanceExceptions();
-			UnhandledException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.Exception, true, "Application.UnhandledException", e.Message);
-			AppDomain.CurrentDomain.UnhandledException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.ExceptionObject as Exception, false, "AppDomain.UnhandledException");
-			TaskScheduler.UnobservedTaskException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.Exception, false, "TaskScheduler.UnobservedTaskException");
+			UnhandledException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.Exception, true, e.Message);
+			AppDomain.CurrentDomain.UnhandledException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.ExceptionObject as Exception, false);
+			TaskScheduler.UnobservedTaskException += (sender, e) => AppLifecycleHelper.HandleAppUnhandledException(e.Exception, false);
 			AppDomain.CurrentDomain.ProcessExit += static (_, _) =>
 				SafetyExtensions.IgnoreExceptions(() => Ioc.Default.GetService<FileLoggerProvider>()?.TryCompleteAndFlush(TimeSpan.FromSeconds(2)));
 		}
@@ -78,7 +77,7 @@ namespace Files.App
 
 			_ = SafetyExtensions.WrapAsync(ActivateAsync, (_, ex) =>
 			{
-				AppLifecycleHelper.HandleAppUnhandledException(ex, true, "App.OnLaunched");
+				AppLifecycleHelper.HandleAppUnhandledException(ex, true);
 				return Task.CompletedTask;
 			});
 
@@ -174,10 +173,6 @@ namespace Files.App
 				Logger.LogInformation("Startup: initial content rendered after {Elapsed} ms", startup.ElapsedMilliseconds);
 				_ = serviceProvider.GetRequiredService<ICommandManager>();
 
-				var telemetryInitialization = AppLifecycleHelper.AppEnvironment is AppEnvironment.Dev
-					? Task.CompletedTask
-					: Task.Run(AppLifecycleHelper.ConfigureSentry);
-
 
 				Logger.LogInformation($"App launched. Launch args type: {appActivationArguments.Data.GetType().Name}");
 
@@ -194,7 +189,6 @@ namespace Files.App
 					await MainWindow.Instance.InitializeApplicationAsync(appActivationArguments.Data);
 				}, Logger);
 
-				await telemetryInitialization;
 				await AppLifecycleHelper.InitializeAppComponentsAsync();
 			}
 		}
@@ -219,8 +213,6 @@ namespace Files.App
 		private void Window_Activated(object sender, WindowActivatedEventArgs args)
 		{
 			Logger.LogInformation($"Window_Activated: State={args.WindowActivationState}");
-
-			ActiveSessionTracker.OnActivationChanged(args.WindowActivationState != WindowActivationState.Deactivated);
 
 			if (!_isWindowClosing && args.WindowActivationState != WindowActivationState.Deactivated)
 				AppModel.IsMainWindowClosed = false;
@@ -252,7 +244,6 @@ namespace Files.App
 			AppModel.IsMainWindowClosed = true;
 			ClearServerWindowHandle();
 			Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().UnregisterKey();
-			ActiveSessionTracker.OnActivationChanged(false);
 
 			try
 			{

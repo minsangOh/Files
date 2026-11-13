@@ -52,7 +52,6 @@ namespace Files.App.Data.Items
 					currentPath.StartsWith(@"\\SHELL\", StringComparison.OrdinalIgnoreCase) ||
 					currentPath.EndsWith(ShellLibraryItem.EXTENSION, StringComparison.OrdinalIgnoreCase) ||
 					currentPath == "Home" ||
-					currentPath == "ReleaseNotes" ||
 					currentPath == "Settings"
 					? null
 					: currentPath;

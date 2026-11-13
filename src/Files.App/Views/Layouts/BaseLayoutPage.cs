@@ -561,7 +561,6 @@ namespace Files.App.Views.Layouts
 				parentShellPage.InstanceViewModel.IsPageTypeFtp = FtpHelpers.IsFtpPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeZipFolder = ZipStorageFolder.IsZipPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeLibrary = LibraryManager.IsLibraryPath(workingDir);
-				parentShellPage.InstanceViewModel.IsPageTypeReleaseNotes = false;
 				parentShellPage.InstanceViewModel.IsPageTypeSettings = false;
 				parentShellPage.ToolbarViewModel.PathControlDisplayText = navigationPath;
 
@@ -598,7 +597,6 @@ namespace Files.App.Views.Layouts
 				parentShellPage.InstanceViewModel.IsPageTypeFtp = FtpHelpers.IsFtpPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeZipFolder = ZipStorageFolder.IsZipPath(workingDir);
 				parentShellPage.InstanceViewModel.IsPageTypeLibrary = LibraryManager.IsLibraryPath(workingDir);
-				parentShellPage.InstanceViewModel.IsPageTypeReleaseNotes = false;
 				parentShellPage.InstanceViewModel.IsPageTypeSettings = false;
 
 				if (!args.IsLayoutSwitch)

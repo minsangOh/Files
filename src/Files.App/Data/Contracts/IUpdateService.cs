@@ -25,18 +25,11 @@ namespace Files.App.Data.Contracts
 		/// </summary>
 		bool IsAppUpdated { get; }
 
-		/// <summary>
-		/// Gets a value that indicates if there are release notes available for the current version of the app.
-		/// </summary>
-		bool AreReleaseNotesAvailable { get; }
-
 		Task DownloadUpdatesAsync();
 
 		Task DownloadMandatoryUpdatesAsync();
 
 		Task CheckForUpdatesAsync();
-
-		Task CheckForReleaseNotesAsync();
 
 		/// <summary>
 		/// Replace Files.App.Launcher.exe if it is used and has been updated

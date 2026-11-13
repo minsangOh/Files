@@ -63,7 +63,6 @@ namespace Files.App.Actions
 				context.PageType != ContentPageTypes.Home &&
 				context.PageType != ContentPageTypes.RecycleBin &&
 				context.PageType != ContentPageTypes.ZipFolder &&
-				context.PageType != ContentPageTypes.ReleaseNotes &&
 				context.PageType != ContentPageTypes.Settings;
 		}
 

@@ -55,12 +55,6 @@
         <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(SENTRY_AUTH_TOKEN)' != ''">
-        <SentryOrg>files-org</SentryOrg>
-        <SentryProject>files-app</SentryProject>
-        <SentryUploadSymbols>true</SentryUploadSymbols>
-    </PropertyGroup>
-
     <ItemGroup>
         <Compile Include="..\Files.App.Server\Settings\SettingsValueCodec.cs" Link="Utils\Serialization\SettingsValueCodec.cs" />
     </ItemGroup>
@@ -138,7 +132,6 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
-        <PackageReference Include="Sentry" />
         <PackageReference Include="SevenZipSharp" />
         <PackageReference Include="SharpZipLib" />
         <PackageReference Include="System.Drawing.Common" />

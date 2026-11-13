@@ -341,12 +341,6 @@ namespace Files.App.Services.Settings
 			set => Set(value, BackgroundSettings.CloseToBackgroundKey);
 		}
 
-		public bool EnableNaturalLanguageSearch
-		{
-			get => Get(true);
-			set => Set(value);
-		}
-
 		public bool ShowSystemTrayIcon
 		{
 			get => Get(BackgroundSettings.ShowSystemTrayIconDefault, BackgroundSettings.ShowSystemTrayIconKey);

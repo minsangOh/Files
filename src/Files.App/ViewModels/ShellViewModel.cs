@@ -146,7 +146,6 @@ namespace Files.App.ViewModels
 		public bool ShowFilterHeader =>
 			UserSettingsService.GeneralSettingsService.ShowFilterHeader &&
 			WorkingDirectory != "Home" &&
-			WorkingDirectory != "ReleaseNotes" &&
 			WorkingDirectory != "Settings";
 
 		private GitProperties _EnabledGitProperties;
@@ -248,7 +247,7 @@ namespace Files.App.ViewModels
 			else if (!Path.IsPathRooted(WorkingDirectory) || Path.GetPathRoot(WorkingDirectory) != Path.GetPathRoot(value))
 				workingRoot = await FilesystemTasks.WrapNullable(() => DriveHelpers.GetRootFromPathAsync(value));
 
-			if (value == "Home" || value == "ReleaseNotes" || value == "Settings")
+			if (value == "Home" || value == "Settings")
 				currentStorageFolder = null;
 			else
 				_ = Task.Run(() => jumpListService.AddFolderAsync(value));
@@ -866,7 +865,7 @@ namespace Files.App.ViewModels
 		{
 			await dispatcherQueue.EnqueueOrInvokeAsync(() =>
 			{
-				if (WorkingDirectory != "Home" && WorkingDirectory != "ReleaseNotes" && WorkingDirectory != "Settings")
+				if (WorkingDirectory != "Home" && WorkingDirectory != "Settings")
 					RefreshItems(null);
 			});
 		}
@@ -887,7 +886,7 @@ namespace Files.App.ViewModels
 				case nameof(UserSettingsService.FoldersSettingsService.SizeUnitFormat):
 					await dispatcherQueue.EnqueueOrInvokeAsync(() =>
 					{
-						if (WorkingDirectory != "Home" && WorkingDirectory != "ReleaseNotes" && WorkingDirectory != "Settings")
+						if (WorkingDirectory != "Home" && WorkingDirectory != "Settings")
 							RefreshItems(null);
 					});
 					break;
@@ -2605,7 +2604,7 @@ namespace Files.App.ViewModels
 
 		public void CheckForBackgroundImage()
 		{
-			if (WorkingDirectory == "Home" || WorkingDirectory == "ReleaseNotes" || WorkingDirectory == "Settings")
+			if (WorkingDirectory == "Home" || WorkingDirectory == "Settings")
 			{
 				FolderBackgroundImageSource = null;
 				return;
@@ -3476,10 +3475,6 @@ namespace Files.App.ViewModels
 				SearchIconBitmapImage ??= await UIHelpers.GetSearchIconResource();
 
 			ItemLoadStatusChanged?.Invoke(this, new ItemLoadStatusChangedEventArgs() { Status = ItemLoadStatusChangedEventArgs.ItemLoadStatus.InProgress });
-
-			if (UserSettingsService.GeneralSettingsService.EnableNaturalLanguageSearch &&
-				search.Query is { } query && await NaturalLanguageSearch.TryTranslateToAqsAsync(query, token) is { } aqs)
-				search.Query = $"${aqs}";
 
 			// Stops late ticks from appending after the final apply
 			using var tickCTS = CancellationTokenSource.CreateLinkedTokenSource(token);

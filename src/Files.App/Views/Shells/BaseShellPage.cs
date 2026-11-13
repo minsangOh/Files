@@ -123,7 +123,6 @@ namespace Files.App.Views.Shells
 		public bool IsStatusBarVisible =>
 			userSettingsService.AppearanceSettingsService.ShowStatusBar &&
 			CurrentPageType != typeof(HomePage) &&
-			CurrentPageType != typeof(ReleaseNotesPage) &&
 			CurrentPageType != typeof(SettingsPage) &&
 			(PaneHolder is null || !PaneHolder.IsMultiPaneActive || Equals(PaneHolder.ActivePane, this));
 
@@ -660,7 +659,6 @@ namespace Files.App.Views.Shells
 			{
 				if (entry.Parameter is NavigationArguments args &&
 					args.NavPathParam is not null and not "Home" &&
-					args.NavPathParam is not null and not "ReleaseNotes" &&
 					args.NavPathParam is not null and not "Settings")
 				{
 					var correctPageType = FolderSettings.GetLayoutType(args.NavPathParam, false);
@@ -678,7 +676,6 @@ namespace Files.App.Views.Shells
 			{
 				if (entry.Parameter is NavigationArguments args &&
 					args.NavPathParam is not null and not "Home" &&
-					args.NavPathParam is not null and not "ReleaseNotes" &&
 					args.NavPathParam is not null and not "Settings")
 				{
 					var correctPageType = FolderSettings.GetLayoutType(args.NavPathParam, false);
@@ -894,8 +891,6 @@ namespace Files.App.Views.Shells
 		public abstract void Up_Click();
 
 		public abstract void NavigateHome();
-
-		public abstract void NavigateToReleaseNotes();
 
 		public abstract void NavigateToSettings(string? selectItem = null);
 

@@ -57,13 +57,6 @@ namespace Files.App.Services
 			get => AppLifecycleHelper.IsAppUpdated;
 		}
 
-		private bool _areReleaseNotesAvailable = false;
-		public bool AreReleaseNotesAvailable
-		{
-			get => _areReleaseNotesAvailable;
-			private set => SetProperty(ref _areReleaseNotesAvailable, value);
-		}
-
 		public SideloadUpdateService() => App.ServerChanged += OnServerChanged;
 
 		private async void OnServerChanged(object? sender, string name)
@@ -94,11 +87,6 @@ namespace Files.App.Services
 		public async Task CheckAndUpdateFilesLauncherAsync()
 		{
 			await SafetyExtensions.IgnoreExceptions(async () => await Server.UpdateService.UpdateLauncherAsync(), App.Logger);
-		}
-
-		public async Task CheckForReleaseNotesAsync()
-		{
-			AreReleaseNotesAvailable = await SafetyExtensions.IgnoreExceptions(async () => await Server.UpdateService.CheckReleaseNotesAsync(), App.Logger);
 		}
 
 		private async Task ApplyPackageUpdateAsync()

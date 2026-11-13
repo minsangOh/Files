@@ -5,7 +5,6 @@ using Files.App.Dialogs;
 using Files.App.Services.Git;
 using LibGit2Sharp;
 using Microsoft.Extensions.Logging;
-using Sentry;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Json;

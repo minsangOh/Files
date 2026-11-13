@@ -234,7 +234,6 @@
         <uap:Capability Name="removableStorage" />
         <Capability Name="internetClient" />
         <Capability Name="privateNetworkClientServer" />
-        <systemai:Capability Name="systemAIModels" />
     </Capabilities>
 
 </Package>

@@ -227,27 +227,7 @@ namespace Files.App.ViewModels.UserControls
 		public string? OmnibarCommandPaletteModeText { get => _OmnibarCommandPaletteModeText; set => SetProperty(ref _OmnibarCommandPaletteModeText, value); }
 
 		private string? _OmnibarSearchModeText;
-		public string? OmnibarSearchModeText
-		{
-			get => _OmnibarSearchModeText;
-			set
-			{
-				if (!SetProperty(ref _OmnibarSearchModeText, value) ||
-					value is null ||
-					!UserSettingsService.GeneralSettingsService.EnableNaturalLanguageSearch ||
-					!NaturalLanguageSearch.IsNaturalLanguageQuery(value))
-					return;
-
-				if (_isNaturalLanguageSearchSupported)
-					NaturalLanguageSearch.Prewarm();
-				else
-					_ = CheckNaturalLanguageSearchSupportAsync();
-			}
-		}
-
-		private bool _isNaturalLanguageSearchSupported;
-		private int _isCheckingNaturalLanguageSearchSupport;
-		public bool IsNaturalLanguageSearchAvailable => _isNaturalLanguageSearchSupported && UserSettingsService.GeneralSettingsService.EnableNaturalLanguageSearch && _InstanceViewModel?.IsPageTypeSettings != true;
+		public string? OmnibarSearchModeText { get => _OmnibarSearchModeText; set => SetProperty(ref _OmnibarSearchModeText, value); }
 
 		public string OmnibarSearchModePlaceholder => _InstanceViewModel?.IsPageTypeSettings == true
 			? Strings.SearchSettings.GetLocalizedResource()
@@ -276,7 +256,6 @@ namespace Files.App.ViewModels.UserControls
 					value.FolderSettings.PropertyChanged += FolderSettings_PropertyChanged;
 					value.PropertyChanged += InstanceViewModel_PropertyChanged;
 					OnPropertyChanged(nameof(OmnibarSearchModePlaceholder));
-					OnPropertyChanged(nameof(IsNaturalLanguageSearchAvailable));
 				}
 			}
 		}
@@ -286,7 +265,6 @@ namespace Files.App.ViewModels.UserControls
 			if (e.PropertyName is nameof(CurrentInstanceViewModel.IsPageTypeSettings))
 			{
 				OnPropertyChanged(nameof(OmnibarSearchModePlaceholder));
-				OnPropertyChanged(nameof(IsNaturalLanguageSearchAvailable));
 
 				// Suggestion source differs between settings and file search — drop stale items.
 				OmnibarSearchModeSuggestionItems.Clear();
@@ -333,39 +311,6 @@ namespace Files.App.ViewModels.UserControls
 			Commands.DecompressArchiveToChildFolder.PropertyChanged += DecompressCommand_PropertyChanged;
 			AppearanceSettingsService.PropertyChanged += AppearanceSettingsService_PropertyChanged;
 			OngoingTasksViewModel.PropertyChanged += OngoingTasksViewModel_PropertyChanged;
-
-			UserSettingsService.GeneralSettingsService.PropertyChanged += GeneralSettingsService_PropertyChanged;
-
-			_ = CheckNaturalLanguageSearchSupportAsync();
-		}
-
-		private async Task CheckNaturalLanguageSearchSupportAsync()
-		{
-			if (Interlocked.Exchange(ref _isCheckingNaturalLanguageSearchSupport, 1) is 1)
-				return;
-
-			try
-			{
-				var isSupported = await Task.Run(NaturalLanguageSearch.IsAvailable);
-				if (isSupported == _isNaturalLanguageSearchSupported)
-					return;
-
-				await _dispatcherQueue.EnqueueOrInvokeAsync(() =>
-				{
-					_isNaturalLanguageSearchSupported = isSupported;
-					OnPropertyChanged(nameof(IsNaturalLanguageSearchAvailable));
-				});
-			}
-			finally
-			{
-				Volatile.Write(ref _isCheckingNaturalLanguageSearchSupport, 0);
-			}
-		}
-
-		private void GeneralSettingsService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName is nameof(IGeneralSettingsService.EnableNaturalLanguageSearch))
-				OnPropertyChanged(nameof(IsNaturalLanguageSearchAvailable));
 		}
 
 		// Methods
@@ -440,7 +385,6 @@ namespace Files.App.ViewModels.UserControls
 		{
 			if (((FrameworkElement)sender).DataContext is not PathBoxItem pathBoxItem ||
 				pathBoxItem.Path == "Home" ||
-				pathBoxItem.Path == "ReleaseNotes" ||
 				pathBoxItem.Path == "Settings")
 			{
 				return;
@@ -465,7 +409,6 @@ namespace Files.App.ViewModels.UserControls
 
 			if (((FrameworkElement)sender).DataContext is not PathBoxItem pathBoxItem ||
 				pathBoxItem.Path == "Home" ||
-				pathBoxItem.Path == "ReleaseNotes" ||
 				pathBoxItem.Path == "Settings")
 			{
 				return;
@@ -498,7 +441,6 @@ namespace Files.App.ViewModels.UserControls
 			if (IsSingleItemOverride ||
 				((FrameworkElement)sender).DataContext is not PathBoxItem pathBoxItem ||
 				pathBoxItem.Path == "Home" ||
-				pathBoxItem.Path == "ReleaseNotes" ||
 				pathBoxItem.Path == "Settings")
 			{
 				return;
@@ -665,12 +607,6 @@ namespace Files.App.ViewModels.UserControls
 			{
 				SavePathToHistory("Home");
 				shellPage.NavigateHome();
-			}
-			else if (normalizedInput.Equals("ReleaseNotes", StringComparison.OrdinalIgnoreCase) ||
-				normalizedInput.Equals(Strings.ReleaseNotes.GetLocalizedResource(), StringComparison.OrdinalIgnoreCase))
-			{
-				SavePathToHistory("ReleaseNotes");
-				shellPage.NavigateToReleaseNotes();
 			}
 			else if (normalizedInput.Equals("Settings", StringComparison.OrdinalIgnoreCase) ||
 				normalizedInput.Equals(Strings.Settings.GetLocalizedResource(), StringComparison.OrdinalIgnoreCase))
@@ -995,11 +931,6 @@ namespace Files.App.ViewModels.UserControls
 					SavePathToHistory("Home");
 					shellPage.NavigateHome();
 				}
-				else if (normalizedInput.Equals("ReleaseNotes", StringComparison.OrdinalIgnoreCase) || normalizedInput.Equals(Strings.ReleaseNotes.GetLocalizedResource(), StringComparison.OrdinalIgnoreCase))
-				{
-					SavePathToHistory("ReleaseNotes");
-					shellPage.NavigateToReleaseNotes();
-				}
 				else if (normalizedInput.Equals("Settings", StringComparison.OrdinalIgnoreCase) || normalizedInput.Equals(Strings.Settings.GetLocalizedResource(), StringComparison.OrdinalIgnoreCase))
 				{
 					SavePathToHistory("Settings");
@@ -1145,7 +1076,7 @@ namespace Files.App.ViewModels.UserControls
 
 				// If the current input is special, populate navigation history instead.
 				if (string.IsNullOrWhiteSpace(pathText) ||
-					pathText is "Home" or "ReleaseNotes" or "Settings")
+					pathText is "Home" or "Settings")
 				{
 					// Load previously entered path
 					if (UserSettingsService.GeneralSettingsService.PathHistoryList is { } pathHistoryList)
@@ -1515,7 +1446,6 @@ namespace Files.App.ViewModels.UserControls
 			Commands.DecompressArchiveHereSmart.PropertyChanged -= DecompressCommand_PropertyChanged;
 			Commands.DecompressArchiveToChildFolder.PropertyChanged -= DecompressCommand_PropertyChanged;
 			AppearanceSettingsService.PropertyChanged -= AppearanceSettingsService_PropertyChanged;
-			UserSettingsService.GeneralSettingsService.PropertyChanged -= GeneralSettingsService_PropertyChanged;
 			OngoingTasksViewModel.PropertyChanged -= OngoingTasksViewModel_PropertyChanged;
 		}
 	}

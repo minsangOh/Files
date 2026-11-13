@@ -1341,7 +1341,6 @@ namespace Files.App.ViewModels.UserControls
 				else if (isPathNull ||
 					(hasStorageItems && (storageItems.AreItemsAlreadyInFolder(path!) || storageItems.ContainsDestinationOrAncestor(path))) ||
 					path!.StartsWith("Home", StringComparison.OrdinalIgnoreCase) ||
-					path.StartsWith("ReleaseNotes", StringComparison.OrdinalIgnoreCase) ||
 					path.StartsWith("Settings", StringComparison.OrdinalIgnoreCase))
 				{
 					rawEvent.AcceptedOperation = DataPackageOperation.None;

@@ -42,13 +42,6 @@ namespace Files.App.Services
 			get => AppLifecycleHelper.IsAppUpdated;
 		}
 
-		private bool _areReleaseNotesAvailable = false;
-		public bool AreReleaseNotesAvailable
-		{
-			get => _areReleaseNotesAvailable;
-			private set => SetProperty(ref _areReleaseNotesAvailable, value);
-		}
-
 		public StoreUpdateService()
 		{
 			_updatePackages = [];
@@ -132,11 +125,6 @@ namespace Files.App.Services
 					IsUpdateAvailable = true;
 				});
 			}
-		}
-
-		public async Task CheckForReleaseNotesAsync()
-		{
-			AreReleaseNotesAvailable = await SafetyExtensions.IgnoreExceptions(async () => await Server.UpdateService.CheckReleaseNotesAsync(), App.Logger);
 		}
 
 		private async Task DownloadAndInstallAsync()

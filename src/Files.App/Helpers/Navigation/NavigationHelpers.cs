@@ -134,7 +134,6 @@ namespace Files.App.Helpers
 			{
 				null or "" or "Home" => Strings.Home.GetLocalizedResource(),
 				"Settings" => Strings.Settings.GetLocalizedResource(),
-				"ReleaseNotes" => Strings.ReleaseNotes.GetLocalizedResource(),
 				string path => ShellHelpers.GetShellNameFromPath(Path.GetFileName(path.TrimEnd('\\', '/')) is { Length: > 0 } name ? name : path),
 				_ => string.Empty,
 			};
@@ -267,8 +266,6 @@ namespace Files.App.Helpers
 					?? throw new InvalidOperationException("The Home sidebar icon is not configured.");
 				imageSource = new BitmapImage(new Uri(iconPath));
 			}
-			else if (path == "ReleaseNotes")
-				imageSource = new BitmapImage(new Uri(AppLifecycleHelper.AppIconPath));
 			else if (path == "Settings")
 				// Settings uses its own animated icon in the sidebar, so we intentionally skip a file-based icon here.
 				imageSource = null;
@@ -307,11 +304,6 @@ namespace Files.App.Helpers
 			{
 				tabLocationHeader = Strings.Home.GetLocalizedResource();
 				((ImageIconSource)iconSource).ImageSource = new BitmapImage(new Uri(SidebarSectionIcons.For(SectionType.Home)!));
-			}
-			else if (currentPath == "ReleaseNotes")
-			{
-				tabLocationHeader = Strings.ReleaseNotes.GetLocalizedResource();
-				((ImageIconSource)iconSource).ImageSource = new BitmapImage(new Uri(AppLifecycleHelper.AppIconPath));
 			}
 			else if (currentPath == "Settings")
 			{

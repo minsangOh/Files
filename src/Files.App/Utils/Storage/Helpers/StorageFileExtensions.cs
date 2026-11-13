@@ -184,8 +184,6 @@ namespace Files.App.Utils.Storage
 			{
 				if (item.Path == "Home")
 					item.Title = Strings.Home.GetLocalizedResource();
-				else if (item.Path == "ReleaseNotes")
-					item.Title = Strings.ReleaseNotes.GetLocalizedResource();
 				else if (item.Path == "Settings")
 					item.Title = Strings.Settings.GetLocalizedResource();
 				else
@@ -399,9 +397,6 @@ namespace Files.App.Utils.Storage
 		{
 			if (path.StartsWith("Home"))
 				return "Home";
-
-			if (path.StartsWith("ReleaseNotes"))
-				return "ReleaseNotes";
 
 			if (path.StartsWith("Settings"))
 				return "Settings";
