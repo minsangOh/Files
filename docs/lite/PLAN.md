@@ -10,7 +10,7 @@ files-community/Files를 포크해 RAM 8GB 사무용 노트북에서 부담 없�
 - 원본 `Files.App` Debug x64 빌드 성공 (재빌드 약 2분).
 - 개발자 모드를 켜고 `FilesDev` 패키지 등록·실행 성공. "실행" 절의 수동 복사 방식으로 정상 기동한다.
 - 포크 전용 워크플로 `.github/workflows/lite-package.yml`이 Release x64 서명 패키지를 만든다 ("Release 패키지 설치" 참고).
-- 원본 Debug와 Release 패키지의 기준 측정 완료 ("측정 기록" 참고). 메모리 목표 확정("결정 사항"). 다음 작업은 1단계다.
+- 원본 Debug와 Release 패키지의 기준 측정 완료 ("측정 기록" 참고). 메모리 목표 확정("결정 사항"). 1단계 완료(홈 위젯 기본 끔). 다음 작업은 2단계다.
 
 ## 대상 PC와 사용 환경
 
@@ -108,12 +108,19 @@ Debug(JIT) 빌드와 Release(Native AOT) 빌드는 점유가 크게 다르다. �
 
 ### 1단계: 기본값만 바꾸기 (코드 삭제 없음)
 
-- `CloseToBackground` false, `ShowSystemTrayIcon` false → 창을 닫으면 서버도 종료.
-- `EnableNaturalLanguageSearch` false.
-- 홈 위젯 기본 끔 (`ShowRecentFilesWidget`, `ShowNetworkLocationsWidget`, `ShowDrivesWidget`, `ShowQuickAccessWidget`).
-- 사이드바 `ShowCloudDrivesSection`, `ShowWslSection`, `ShowFileTagsSection` false.
-- 업데이트 확인과 릴리스 노트 자동 열기 끔.
-- 측정해서 항목별 효과를 기록한다.
+완료 (2026-11-13, 브랜치 `lite/stage1-defaults`). 항목별 효과는 원본 Release 패키지에 설정 값을 넣어 S1(새로 띄운 홈, 탭 1개)을 3회씩 재서 판단했다. 원본 3회의 Files Private가 7MB쯤 흔들려 그보다 작은 차이는 효과 없음으로 봤다.
+
+| 항목 | S1 Private 합계 (3회 평균) | 판단 |
+|---|---|---|
+| 원본 | 174MB | |
+| 홈 위젯 4개 끔 | 155MB (-19) | **적용**. 하나씩 끄면 어느 것도 효과가 없었다. 넷 다 꺼야 줄어든다 |
+| `ShowSystemTrayIcon` false | 171MB (-3) | 미적용. 오차 범위 |
+| `EnableNaturalLanguageSearch` false | 173MB (-1) | 미적용. 모델은 검색창에 문장을 칠 때만 데운다 |
+| 사이드바 클라우드·WSL·태그 섹션 끔 | 174MB (0) | 미적용. 이 PC에는 해당 항목이 거의 없다 |
+| `CloseToBackground` false | 잴 수 없음 | 미적용. 포크 패키지는 Dev 환경이라 이미 false다 (S6 = 0) |
+| 업데이트 확인·릴리스 노트 자동 열기 끔 | 잴 수 없음 | 미적용. Dev 환경에서는 원래 돌지 않는다. 설정 스위치도 없다 |
+
+적용 후 Release 패키지 결과는 "측정 기록"의 1단계 행을 본다.
 
 ### 2단계: 살아 있는 메모리 줄이기 (핵심)
 
@@ -227,5 +234,11 @@ upstream `ci.yml`은 포크에서 돌지 않는다. 모든 잡에 `github.reposi
 | 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S6 창 닫은 뒤 | 0 | 0 | 60초 뒤 두 프로세스 모두 종료 (Dev 환경이라 `CloseToBackground` false) |
 | 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S3 NAS (재측정) | 316 / 214 | 98 / 48 | 세션 초기화 후 탭 1개, NAS 업무 폴더(944개) 자세히 보기. 측정 뒤 설정에 정보 패널이 켜져 있었다 |
 | 2026-11-13 | f6f35e79 (원본) | Release x64 (CI) | S5 듀얼 패인 + 미리보기 (재측정) | 260 / 218 | 99 / 47 | 세션 초기화 후 탭 1개, 듀얼 패인(NAS 공용폴더 / 개발팀), 미리보기 켜고 이미지·PDF 선택(사용자 조작) |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S1 유휴 | 205 / 114 | 96 / 47 | 설치 직후. 합계 161 (원본 175) |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S2 로컬 대량 | 277 / 180 | 96 / 46 | 합계 226 (원본 228). 경로로 바로 열어 홈을 거치지 않는다 |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S3 NAS | 271 / 186 | 90 / 51 | 탭 1개, 같은 NAS 폴더(944개), 정보 패널 켜짐. 합계 237 (원본 262). 홈에서 이동한 탭이라 위젯 몫이 빠졌다 |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S4 탭 5개 | 269 / 228 | 83 / 47 | 원본과 같은 순서. 합계 275 (원본 281) |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S5 듀얼 패인 + 미리보기 | 243 / 210 | 92 / 46 | 탭 1개, 공용폴더 / 개발팀, 이미지·PDF 선택(사용자 조작). 합계 256 (원본 265) |
+| 2026-11-13 | 1단계 (홈 위젯 끔) | Release x64 (CI) | S6 창 닫은 뒤 | 0 | 0 | 60초 뒤 두 프로세스 모두 종료 |
 
-Debug에서 아직 재지 않은 것: S3 단독, S5. Release는 S1~S6 모두 쟀다.
+Debug에서 아직 재지 않은 것: S3 단독, S5. Release는 S1~S6 모두 쟀다. 1단계 행은 시나리오마다 1회 측정이라 10MB 안쪽 차이는 오차일 수 있다.
