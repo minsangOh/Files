@@ -76,13 +76,6 @@ jobs:
           -p:PackageCertificateThumbprint="" `
           -v:quiet
 
-    # Publish only the public certificate so the package can be trusted locally
-    - name: Export public certificate
-      shell: pwsh
-      run: |
-        $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($env:APPX_SELFSIGNED_CERT_PATH, "")
-        [System.IO.File]::WriteAllBytes("$env:APPX_PACKAGE_DIR\FilesApp_SelfSigned.cer", $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert))
-
     - name: Upload the package to the Artifacts
       uses: actions/upload-artifact@v7
       with:
