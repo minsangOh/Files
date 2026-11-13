@@ -53,10 +53,18 @@ jobs:
           -p:PublishReadyToRun=true `
           -v:quiet
 
-    - name: Create self signed cert as a pfx file
-      run: ./.github/scripts/Generate-SelfCertPfx.ps1 -Destination "$env:APPX_SELFSIGNED_CERT_PATH"
+    # A fixed certificate lets the package be trusted once on the target PC
+    - name: Restore the signing certificate
+      shell: pwsh
+      env:
+        PFX_BASE64: ${{ secrets.LITE_SIGNING_PFX_BASE64 }}
+      run: |
+        if (-not $env:PFX_BASE64) { throw "LITE_SIGNING_PFX_BASE64 secret is not set" }
+        [IO.File]::WriteAllBytes($env:APPX_SELFSIGNED_CERT_PATH, [Convert]::FromBase64String($env:PFX_BASE64))
 
     - name: Build & package Files
+      env:
+        PFX_PASSWORD: ${{ secrets.LITE_SIGNING_PFX_PASSWORD }}
       run: |
         msbuild `
           -warnaserror `
@@ -72,7 +80,7 @@ jobs:
           -p:AppxPackageDir=$env:APPX_PACKAGE_DIR `
           -p:AppxPackageSigningEnabled=true `
           -p:PackageCertificateKeyFile=$env:APPX_SELFSIGNED_CERT_PATH `
-          -p:PackageCertificatePassword="" `
+          -p:PackageCertificatePassword="$env:PFX_PASSWORD" `
           -p:PackageCertificateThumbprint="" `
           -v:quiet
 
