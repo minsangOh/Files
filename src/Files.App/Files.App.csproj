@@ -79,6 +79,8 @@
         <NativeLibrary Include="runtimeobject.lib" />
         <NativeLibrary Include="cfgmgr32.lib" />
         <NativeLibrary Include="mpr.lib" />
+        <!-- Sentry used to bring this in; DirectPInvoke GDI32 still needs it -->
+        <NativeLibrary Include="gdi32.lib" />
         <NativeLibrary Include="@(_WindowsAppRuntimeBootstrapLibrary->Exists())" />
     </ItemGroup>
   
