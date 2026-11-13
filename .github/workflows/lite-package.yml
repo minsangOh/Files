@@ -58,13 +58,15 @@ jobs:
       shell: pwsh
       env:
         PFX_BASE64: ${{ secrets.LITE_SIGNING_PFX_BASE64 }}
+        PFX_PASSWORD: ${{ secrets.LITE_SIGNING_PFX_PASSWORD }}
       run: |
         if (-not $env:PFX_BASE64) { throw "LITE_SIGNING_PFX_BASE64 secret is not set" }
-        [IO.File]::WriteAllBytes($env:APPX_SELFSIGNED_CERT_PATH, [Convert]::FromBase64String($env:PFX_BASE64))
+        # The packaging task cannot import a password protected key file, so re-export it without one
+        $flags = [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable
+        $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([Convert]::FromBase64String($env:PFX_BASE64), $env:PFX_PASSWORD, $flags)
+        [IO.File]::WriteAllBytes($env:APPX_SELFSIGNED_CERT_PATH, $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, ""))
 
     - name: Build & package Files
-      env:
-        PFX_PASSWORD: ${{ secrets.LITE_SIGNING_PFX_PASSWORD }}
       run: |
         msbuild `
           -warnaserror `
@@ -80,7 +82,7 @@ jobs:
           -p:AppxPackageDir=$env:APPX_PACKAGE_DIR `
           -p:AppxPackageSigningEnabled=true `
           -p:PackageCertificateKeyFile=$env:APPX_SELFSIGNED_CERT_PATH `
-          -p:PackageCertificatePassword="$env:PFX_PASSWORD" `
+          -p:PackageCertificatePassword="" `
           -p:PackageCertificateThumbprint="" `
           -v:quiet
 
