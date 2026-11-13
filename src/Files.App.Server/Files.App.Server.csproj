@@ -1,9 +1,9 @@
 ﻿<!--  Copyright (c) Files Community. Licensed under the MIT License.  -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="PublishWithSatoriGC" Version="10.0.15-satori.42242472690.2" />
-
     <PropertyGroup>
+        <!-- Standard workstation GC tuned for low memory instead of Satori -->
+        <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
         <OutputType>WinExe</OutputType>
         <DefaultLanguage>en-US</DefaultLanguage>
         <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
@@ -28,6 +28,10 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SATORI001;SATORI002</MSBuildWarningsNotAsErrors>
     </PropertyGroup>
+
+    <ItemGroup>
+        <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+    </ItemGroup>
 
     <ItemGroup>
         <Manifest Include="app.manifest" />
