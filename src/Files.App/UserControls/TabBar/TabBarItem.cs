@@ -125,6 +125,8 @@ namespace Files.App.UserControls.TabBar
 			content.ContentChanged -= TabItemContent_ContentChanged;
 			content.Dispose();
 			ContentFrame.Content = null;
+
+			AppMemoryHelper.RequestTrim();
 		}
 
 		public void Unload()
