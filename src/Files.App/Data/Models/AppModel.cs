@@ -44,6 +44,14 @@ namespace Files.App.Data.Models
 
 					if (value >= 0 && value < MainPageViewModel.AppInstances.Count)
 					{
+						for (var i = 0; i < MainPageViewModel.AppInstances.Count; i++)
+						{
+							if (i == value)
+								MainPageViewModel.AppInstances[i].Wake();
+							else
+								MainPageViewModel.AppInstances[i].ScheduleHibernation();
+						}
+
 						if (MainWindow.Instance.Content is Frame rootFrame && rootFrame.Content is MainPage mainView)
 							mainView.ViewModel.SelectedTabItem = MainPageViewModel.AppInstances[value];
 					}

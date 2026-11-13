@@ -1,6 +1,7 @@
 // Copyright (c) Files Community
 // Licensed under the MIT License.
 
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 
@@ -11,6 +12,11 @@ namespace Files.App.UserControls.TabBar
 	/// </summary>
 	public sealed partial class TabBarItem : ObservableObject, ITabBarItem, IDisposable
 	{
+		// Background tabs release their pages after this delay and rebuild them from NavigationParameter when selected again
+		private static readonly TimeSpan HibernationDelay = TimeSpan.FromSeconds(30);
+
+		private DispatcherQueueTimer? hibernationTimer;
+
 		public Frame? ContentFrame { get; private set; }
 
 		public event EventHandler<TabBarItemParameter>? ContentChanged;
@@ -86,6 +92,41 @@ namespace Files.App.UserControls.TabBar
 			ContentFrame.Navigated += ContentFrame_Navigated;
 		}
 
+		public void ScheduleHibernation()
+		{
+			if (ContentFrame?.Content is null || hibernationTimer?.IsRunning == true)
+				return;
+
+			if (hibernationTimer is null)
+			{
+				hibernationTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+				hibernationTimer.Interval = HibernationDelay;
+				hibernationTimer.IsRepeating = false;
+				hibernationTimer.Tick += HibernationTimer_Tick;
+			}
+
+			hibernationTimer.Start();
+		}
+
+		public void Wake()
+		{
+			hibernationTimer?.Stop();
+
+			if (ContentFrame is { Content: null } frame && _NavigationArguments is not null)
+				frame.Navigate(_NavigationArguments.InitialPageType, _NavigationArguments.NavigationParameter, new SuppressNavigationTransitionInfo());
+		}
+
+		private void HibernationTimer_Tick(DispatcherQueueTimer sender, object args)
+		{
+			var content = TabItemContent;
+			if (content is null || content.IsCurrentInstance || ContentFrame is null)
+				return;
+
+			content.ContentChanged -= TabItemContent_ContentChanged;
+			content.Dispose();
+			ContentFrame.Content = null;
+		}
+
 		public void Unload()
 		{
 			ContentChanged -= NavigationHelpers.Control_ContentChanged;
@@ -107,6 +148,13 @@ namespace Files.App.UserControls.TabBar
 
 		public void Dispose()
 		{
+			if (hibernationTimer is not null)
+			{
+				hibernationTimer.Stop();
+				hibernationTimer.Tick -= HibernationTimer_Tick;
+				hibernationTimer = null;
+			}
+
 			var content = TabItemContent;
 			if (content is not null)
 			{
