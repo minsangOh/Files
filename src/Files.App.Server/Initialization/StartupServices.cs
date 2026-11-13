@@ -5,13 +5,10 @@ namespace Files.App.Server;
 
 internal static class StartupServices
 {
-	private static readonly Lazy<Task> menuInitialization = new(() => SafetyExtensions.IgnoreExceptions(ContextMenu.WarmUpQueryContextMenuAsync, Program.Logger));
-
 	internal static async Task InitializeAsync()
 	{
+		// Lite: the update timer and context menu warm-up are skipped to keep the server small; menus load on first use
 		CatalogWatchers.Initialize();
-		_ = SafetyExtensions.IgnoreExceptions(UpdateCatalog.InitializeAsync, Program.Logger);
-		_ = menuInitialization.Value;
 		await Task.WhenAll(
 			SafetyExtensions.IgnoreExceptions(InitializationCache.InitializeAsync, Program.Logger),
 			SafetyExtensions.IgnoreExceptions(TagCatalog.InitializeAsync, Program.Logger),

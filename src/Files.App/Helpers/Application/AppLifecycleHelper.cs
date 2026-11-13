@@ -146,7 +146,9 @@ namespace Files.App.Helpers
 		{
 			var updateService = Ioc.Default.GetRequiredService<IUpdateService>();
 
-			await updateService.CheckForReleaseNotesAsync();
+			// Lite: Dev builds never open release notes, so skip the network check
+			if (AppEnvironment != AppEnvironment.Dev)
+				await updateService.CheckForReleaseNotesAsync();
 
 			// Check for release notes before checking for new updates
 			if (AppEnvironment != AppEnvironment.Dev &&
